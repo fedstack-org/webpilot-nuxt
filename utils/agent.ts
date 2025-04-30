@@ -4,7 +4,13 @@ import type { OpenAI } from 'openai'
 import type { VNodeChild } from 'vue'
 import prompt from './prompt.md?raw'
 
-export type ToolMessageState = 'bad-input' | 'pending-approval' | 'pending-response' | 'completed' | 'rejected' | 'failed'
+export type ToolMessageState =
+  | 'bad-input'
+  | 'pending-approval'
+  | 'pending-response'
+  | 'completed'
+  | 'rejected'
+  | 'failed'
 
 export interface IAgentToolParam {
   description: MaybeRef<string>
@@ -107,7 +113,9 @@ export interface ISystemPromptParams {
 }
 
 export function getSystemPrompt(params: ISystemPromptParams) {
-  return prompt.replace(/{{tools}}/g, params.tools).replace(/{{website_instructions}}/g, params.website_instructions)
+  return prompt
+    .replace(/{{tools}}/g, params.tools)
+    .replace(/{{website_instructions}}/g, params.website_instructions)
 }
 
 export interface INextStepOptions {
@@ -137,7 +145,10 @@ export class Environment {
     this.instructions = computed(() => this._instructions)
   }
 
-  registerTool<K extends string, Params, Result>(name: K, tool: Omit<IAgentTool<Params, Result>, 'name'> & { name?: K }) {
+  registerTool<K extends string, Params, Result>(
+    name: K,
+    tool: Omit<IAgentTool<Params, Result>, 'name'> & { name?: K }
+  ) {
     const oldTool = this._tools[name]
     this._tools[name] = { ...tool, name }
     return () => {
@@ -159,7 +170,10 @@ export class Environment {
     return toRef(this._tools, name) as Ref<IAgentTool<Params, Result>>
   }
 
-  registerInstruction<K extends string>(name: K, instruction: Omit<IAgentInstruction, 'name'> & { name?: K }) {
+  registerInstruction<K extends string>(
+    name: K,
+    instruction: Omit<IAgentInstruction, 'name'> & { name?: K }
+  ) {
     const oldInstruction = this._instructions[name]
     this._instructions[name] = { ...instruction, name }
     return () => {
@@ -261,7 +275,9 @@ export class Environment {
     }
   }
 
-  private async _convertToOpenAIMessages(messages: IAgentMessage[]): Promise<OpenAI.ChatCompletionMessageParam[]> {
+  private async _convertToOpenAIMessages(
+    messages: IAgentMessage[]
+  ): Promise<OpenAI.ChatCompletionMessageParam[]> {
     const result: OpenAI.ChatCompletionMessageParam[] = []
     for (const message of messages) {
       if (message.role === 'user') {
@@ -330,7 +346,9 @@ export class Environment {
         const paramClosingTag = `</${currentParamName}>`
         if (currentParamValue.endsWith(paramClosingTag)) {
           // end of param value
-          currentToolUse.params[currentParamName] = currentParamValue.slice(0, -paramClosingTag.length).trim()
+          currentToolUse.params[currentParamName] = currentParamValue
+            .slice(0, -paramClosingTag.length)
+            .trim()
           currentParamName = undefined
           continue
         } else {
@@ -384,7 +402,9 @@ export class Environment {
           if (currentTextContent) {
             currentTextContent.partial = false
             // remove the partially accumulated tool use tag from the end of text (<tool)
-            currentTextContent.content = currentTextContent.content.slice(0, -toolUseOpeningTag.slice(0, -1).length).trim()
+            currentTextContent.content = currentTextContent.content
+              .slice(0, -toolUseOpeningTag.slice(0, -1).length)
+              .trim()
             contentBlocks.push(currentTextContent)
             currentTextContent = undefined
           }
@@ -411,7 +431,9 @@ export class Environment {
       // stream did not complete tool call, add it as partial
       if (currentParamName) {
         // tool call has a parameter that was not completed
-        currentToolUse.params[currentParamName] = accumulator.slice(currentParamValueStartIndex).trim()
+        currentToolUse.params[currentParamName] = accumulator
+          .slice(currentParamValueStartIndex)
+          .trim()
       }
       contentBlocks.push(currentToolUse)
     }
@@ -452,7 +474,9 @@ Parameters:
       }
       params.tools += `</${tool.name}>\n\n`
     }
-    const instructions = Object.values(this._instructions).filter(options?.instructionFilter ?? (() => true))
+    const instructions = Object.values(this._instructions).filter(
+      options?.instructionFilter ?? (() => true)
+    )
     for (const instruction of instructions) {
       params.website_instructions += `
 ## ${instruction.name}

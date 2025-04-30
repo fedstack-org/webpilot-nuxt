@@ -1,6 +1,9 @@
 <template>
   <div class="flex flex-col gap-2">
-    <MarkdownContent class="max-w-none markdown-body bg-transparent!" :content="message?.use.params.question ?? ''" />
+    <MarkdownContent
+      class="max-w-none markdown-body bg-transparent!"
+      :content="message?.use.params.question ?? ''"
+    />
     <NButton
       v-for="(option, i) of options"
       :key="i"

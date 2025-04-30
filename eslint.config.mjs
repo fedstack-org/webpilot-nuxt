@@ -15,6 +15,6 @@ export default withNuxt({
         math: 'always'
       }
     ],
-    'vue/first-attribute-linebreak': 'off',
+    'vue/first-attribute-linebreak': 'off'
   }
 })

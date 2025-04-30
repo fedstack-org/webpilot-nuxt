@@ -1,6 +1,9 @@
 <template>
   <div class="flex flex-col gap-2">
-    <MarkdownContent class="max-w-none markdown-body bg-transparent!" :content="message?.use.params.result ?? ''" />
+    <MarkdownContent
+      class="max-w-none markdown-body bg-transparent!"
+      :content="message?.use.params.result ?? ''"
+    />
     <NButton :disabled="disabled" @click="newTask">新建对话</NButton>
     <NInput
       v-model:value="message.uiState!.input"

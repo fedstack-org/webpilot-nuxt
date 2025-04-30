@@ -24,7 +24,8 @@ const _useAgent = ({
     () =>
       environment.nextStep(taskContext.value, {
         toolFilter: (tool) => !config.tools[tool.name]?.disabled && toolFilter(tool),
-        instructionFilter: (instruction) => !config.instructions[instruction.name]?.disabled && instructionFilter(instruction)
+        instructionFilter: (instruction) =>
+          !config.instructions[instruction.name]?.disabled && instructionFilter(instruction)
       }),
     { toast: false }
   )

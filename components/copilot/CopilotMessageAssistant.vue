@@ -20,13 +20,18 @@
       <NCollapse v-if="message?.thought">
         <NCollapseItem title="思考中">
           <NCard embedded>
-            <MarkdownContent class="prose prose-sm max-w-none bg-transparent!" :content="message?.thought" />
+            <MarkdownContent
+              class="prose prose-sm max-w-none bg-transparent!"
+              :content="message?.thought"
+            />
           </NCard>
         </NCollapseItem>
       </NCollapse>
       <MarkdownContent
         class="prose prose-sm max-w-none bg-transparent!"
-        :content="message?.content || (message?.partial ? '*等待响应*' : '我将直接使用工具来完成任务')"
+        :content="
+          message?.content || (message?.partial ? '*等待响应*' : '我将直接使用工具来完成任务')
+        "
       />
     </NCard>
   </div>

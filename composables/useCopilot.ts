@@ -11,12 +11,22 @@ export interface IUseCopilotOptions {
   global?: boolean
 }
 
-const _useCopilot = ({ agent, createAgentRoot = false, global = false }: IUseCopilotOptions = {}) => {
+const _useCopilot = ({
+  agent,
+  createAgentRoot = false,
+  global = false
+}: IUseCopilotOptions = {}) => {
   const show = ref(true)
-  const { environment, taskContext, startStepTask, handleUserInput, newTask, config, toolFilter, instructionFilter } = useAgent(
-    createAgentRoot,
-    agent
-  )
+  const {
+    environment,
+    taskContext,
+    startStepTask,
+    handleUserInput,
+    newTask,
+    config,
+    toolFilter,
+    instructionFilter
+  } = useAgent(createAgentRoot, agent)
   const quickActions = ref<ICopilotQuickAction[]>([])
   return {
     global,
@@ -51,7 +61,9 @@ export const useQuickAction = (action: ICopilotQuickAction) => {
     quickActions.value.push(action)
   })
   onBeforeUnmount(() => {
-    const index = quickActions.value.findIndex((a) => a.name === action.name && a.instruction === action.instruction)
+    const index = quickActions.value.findIndex(
+      (a) => a.name === action.name && a.instruction === action.instruction
+    )
     if (index > -1) {
       quickActions.value.splice(index, 1)
     }

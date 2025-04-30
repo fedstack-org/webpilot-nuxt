@@ -57,8 +57,12 @@
           }"
         />
         <div v-else class="flex gap-2">
-          <NButton :disabled size="small" secondary type="success" class="flex-1" @click="approve"> 允许 </NButton>
-          <NButton :disabled size="small" secondary type="error" class="flex-1" @click="reject"> 拒绝 </NButton>
+          <NButton :disabled size="small" secondary type="success" class="flex-1" @click="approve">
+            允许
+          </NButton>
+          <NButton :disabled size="small" secondary type="error" class="flex-1" @click="reject">
+            拒绝
+          </NButton>
         </div>
       </div>
     </NCard>
@@ -173,7 +177,10 @@ onMounted(() => {
   if (['ask_followup_question', 'attempt_completion'].includes(message.value.use.name)) {
     return
   }
-  if (!environment.tools.value[message.value.use.name]?.needApproval || config.tools[message.value.use.name]?.approved) {
+  if (
+    !environment.tools.value[message.value.use.name]?.needApproval ||
+    config.tools[message.value.use.name]?.approved
+  ) {
     approve()
   }
 })

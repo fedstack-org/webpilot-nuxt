@@ -14,7 +14,9 @@ const _useLocale = () => {
         return { locale: zhCN, dateLocale: dateZhCN }
     }
   })
-  const currentLocale = computed(() => locales.value.find((locale) => locale.code === persisted.value))
+  const currentLocale = computed(() =>
+    locales.value.find((locale) => locale.code === persisted.value)
+  )
 
   watch(
     () => persisted.value,
@@ -32,7 +34,10 @@ const _useLocale = () => {
     { immediate: true }
   )
   if (lang.value) {
-    if (typeof lang.value === 'string' && locales.value.some((locale) => locale.code === lang.value)) {
+    if (
+      typeof lang.value === 'string' &&
+      locales.value.some((locale) => locale.code === lang.value)
+    ) {
       console.log(`[Locale] Persisting locale into ${lang.value}`)
       persisted.value = lang.value as Locale
     }

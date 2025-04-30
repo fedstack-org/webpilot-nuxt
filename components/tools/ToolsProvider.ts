@@ -1,4 +1,4 @@
-import RouterProvider from './RouterProvider'
+import RouterProvider from './providers/RouterProvider'
 
 export default defineComponent(() => {
   return () =>
