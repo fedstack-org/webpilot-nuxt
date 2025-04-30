@@ -1,2 +1,36 @@
 app_name: AI应用基座
-copilot: 智能助手
+webpilot:
+  name: 智能助手
+  control:
+    available_tools: 可用工具
+    auto_approve: 自动允许
+    available_instructions: 可用指令
+  msg:
+    aigc_warn: 回答由AI生成，请仔细鉴别
+    input_placeholder: 请输入消息（⏎发送 ⇧+⏎换行）
+    api_pending: 请求中
+    api_success: 请求成功
+    thinking: 思考中
+    thought: 思考内容
+    direct_tool_use: 我将直接使用工具来完成任务
+    tool_use_title: 智能助手{toolTitle}
+    tool_use_bad_input: AI遇到了问题，重试中
+    tool_use_params: 工具调用详情
+    tool_use_result: 工具调用结果
+    tool_use_title__ask_followup_question: 想问您一个问题
+    tool_use_title__attempt_completion: 完成了任务
+    tool_use_title_pending_response: 正在使用{toolName}
+    tool_use_title_use: 使用了{toolName}
+    tool_use_title_reject: 用户拒绝了{toolName}
+    tool_use_title_want: 希望使用{toolName}
+    recent_tasks: 最近的任务
+    attempt_completion_feedback_placeholder: 请输入反馈（⏎提交 ⇧+⏎换行）
+    ask_followup_question_reply_placeholder: 请回答（⏎提交 ⇧+⏎换行）
+    welcome: 请输入您的问题
+  action:
+    approve: 允许
+    reject: 拒绝
+    new_task: 新建对话
+  term:
+    tool: 工具
+    user: 用户

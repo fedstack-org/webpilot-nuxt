@@ -4,12 +4,14 @@
       class="max-w-none markdown-body bg-transparent!"
       :content="message?.use.params.result ?? ''"
     />
-    <NButton :disabled="disabled" @click="newTask">新建对话</NButton>
+    <NButton :disabled="disabled" @click="newTask">
+      {{ $t('webpilot.action.new_task') }}
+    </NButton>
     <NInput
       v-model:value="message.uiState!.input"
       type="textarea"
       :autosize="{ minRows: 1, maxRows: 4 }"
-      :placeholder="'请输入反馈（⏎提交 ⇧+⏎换行）'"
+      :placeholder="$t('webpilot.msg.attempt_completion_feedback_placeholder')"
       :disabled="disabled"
       @keydown="handleKeydown"
     />

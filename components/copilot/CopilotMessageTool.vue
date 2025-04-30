@@ -8,7 +8,7 @@
               <div :class="[iconClass]" />
             </NIcon>
           </NAvatar>
-          <div>智能助手{{ toolTitle }}</div>
+          <div>{{ $t('webpilot.msg.tool_use_title', { toolTitle }) }}</div>
         </div>
       </template>
       <template #header-extra>
@@ -19,9 +19,13 @@
       </template>
       <CopilotToolFollowup v-if="message.use.name === 'ask_followup_question'" :message />
       <CopilotToolCompletion v-else-if="message.use.name === 'attempt_completion'" :message />
-      <NAlert v-else-if="message.state === 'bad-input'" title="AI遇到了问题，重试中" type="error" />
+      <NAlert
+        v-else-if="message.state === 'bad-input'"
+        :title="$t('webpilot.msg.tool_use_bad_input_alert')"
+        type="error"
+      />
       <NCollapse v-else :default-expanded-names="['params', 'result']">
-        <NCollapseItem name="params" title="工具调用详情">
+        <NCollapseItem name="params" :title="$t('webpilot.msg.tool_use_params')">
           <CommonRenderFunction
             v-if="metadata?.uiParams"
             :renderer="metadata?.uiParams"
@@ -29,7 +33,11 @@
           />
           <MarkdownContent v-else class="border rounded max-w-none shadow" :content="details" />
         </NCollapseItem>
-        <NCollapseItem v-if="message.result" name="result" title="工具调用结果">
+        <NCollapseItem
+          v-if="message.result"
+          name="result"
+          :title="$t('webpilot.msg.tool_use_result')"
+        >
           <CommonRenderFunction
             v-if="message.state === 'completed' && metadata?.uiResult"
             :renderer="metadata?.uiResult"
@@ -58,10 +66,10 @@
         />
         <div v-else class="flex gap-2">
           <NButton :disabled size="small" secondary type="success" class="flex-1" @click="approve">
-            允许
+            {{ $t('webpilot.action.approve') }}
           </NButton>
           <NButton :disabled size="small" secondary type="error" class="flex-1" @click="reject">
-            拒绝
+            {{ $t('webpilot.action.reject') }}
           </NButton>
         </div>
       </div>
@@ -70,10 +78,12 @@
 </template>
 
 <script setup lang="ts">
-import { NAlert, NAvatar, NButton, NCard, NCollapse, NCollapseItem, NIcon } from 'naive-ui'
+import { NAlert, NAvatar, NButton, NCard, NCollapse, NCollapseItem, NIcon, NSpin } from 'naive-ui'
 
 const message = defineModel<IToolMessage>('message', { required: true })
 const { startStepTask, environment, config } = useCopilot()
+const { t } = useI18n()
+
 const disabled = computed(() => message.value.state !== 'pending-approval')
 
 const details = computed(() =>
@@ -102,29 +112,35 @@ const iconClass = computed(() => {
 const metadata = computed(() => environment.tools.value[message.value.use.name]?.metadata)
 
 const toolTitle = computed(() => {
-  const toolName = metadata.value?.uiName ?? '工具'
+  const toolName = metadata.value?.uiName ?? t('webpilot.term.tool')
   switch (message.value.use.name) {
     case 'ask_followup_question':
-      return '想问您一个问题'
+      return t('webpilot.msg.tool_use_title__ask_followup_question')
     case 'attempt_completion':
-      return '完成了任务'
+      return t('webpilot.msg.tool_use_title__attempt_completion')
     default:
       switch (message.value.state) {
         case 'pending-response':
-          return '正在使用工具'
+          return t('webpilot.msg.tool_use_title_pending_response', { toolName })
         case 'completed':
         case 'failed':
-          return `使用了${toolName}`
+          return t('webpilot.msg.tool_use_title_use', { toolName })
         case 'rejected':
-          return '工具使用被拒绝'
+          return t('webpilot.msg.tool_use_title_reject', { toolName })
         case 'pending-approval':
         default:
-          return `希望使用${toolName}`
+          return t('webpilot.msg.tool_use_title_want', { toolName })
       }
   }
 })
 
 const displayState = computed(() => {
+  switch (message.value.use.name) {
+    case 'ask_followup_question':
+      return { class: 'i-carbon:ai-status-in-progress', color: 'blue' }
+    case 'attempt_completion':
+      return { class: 'i-carbon:checkmark', color: 'green' }
+  }
   switch (message.value.state) {
     case 'completed':
       return { class: 'i-carbon:checkmark', color: 'green' }

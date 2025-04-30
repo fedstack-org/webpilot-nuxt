@@ -8,7 +8,9 @@
               <div class="i-fa6-brands:internet-explorer" />
             </NIcon>
           </NAvatar>
-          <div>{{ message?.partial ? '请求中' : '请求成功' }}</div>
+          <div>
+            {{ $t(message?.partial ? 'webpilot.msg.api_pending' : 'webpilot.msg.api_success') }}
+          </div>
         </div>
       </template>
       <template #header-extra>
@@ -18,7 +20,15 @@
         </NIcon>
       </template>
       <NCollapse v-if="message?.thought">
-        <NCollapseItem title="思考中">
+        <NCollapseItem
+          :title="
+            $t(
+              message?.partial && !message?.content
+                ? 'webpilot.msg.thinking'
+                : 'webpilot.msg.thought'
+            )
+          "
+        >
           <NCard embedded>
             <MarkdownContent
               class="prose prose-sm max-w-none bg-transparent!"
@@ -29,9 +39,7 @@
       </NCollapse>
       <MarkdownContent
         class="prose prose-sm max-w-none bg-transparent!"
-        :content="
-          message?.content || (message?.partial ? '*等待响应*' : '我将直接使用工具来完成任务')
-        "
+        :content="message?.content || (message?.partial ? '' : $t('webpilot.msg.direct_tool_use'))"
       />
     </NCard>
   </div>

@@ -8,11 +8,13 @@ const props = defineProps<{
   content: string
 }>()
 
-const content = computed(() => props.content)
-
 const id = useId() || 'markdown'
-const { data } = useAsyncData(id, () => renderMarkdown(content.value), {
-  default: () => '',
-  watch: [content]
+const { data, refresh } = useAsyncData(id, () => renderMarkdown(props.content), {
+  default: () => ''
 })
+
+watch(
+  () => props.content,
+  () => refresh()
+)
 </script>

@@ -8,7 +8,7 @@
       :class="[$style['copilot-panel']]"
       content-style="overflow: hidden;"
     >
-      <CopilotMessages />
+      <CopilotMessages :user-name />
     </NScrollbar>
     <CopilotNoMessages v-else :class="[$style['copilot-panel']]" />
     <CopilotInput :advanced />
@@ -21,6 +21,7 @@ import { NScrollbar } from 'naive-ui'
 
 defineProps<{
   advanced?: boolean
+  userName?: string
 }>()
 
 const scrollbar = useTemplateRef('scrollbar')

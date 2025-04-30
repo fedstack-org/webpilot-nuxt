@@ -240,16 +240,17 @@ export class Environment {
       curMsg.partial = false
       const toolUse = contentBlocks.find((block) => block.type === 'tool_use')
       if (!toolUse) {
-        taskContext.messages.push({
-          role: 'tool',
-          use: { type: 'tool_use', name: '_no_tool', params: {}, partial: false },
-          params: {},
-          state: 'bad-input',
-          result: '',
-          formattedResult: 'No tool use block found. You must use exactly one tool',
-          uiState: {}
-        })
-        continue
+        // taskContext.messages.push({
+        //   role: 'tool',
+        //   use: { type: 'tool_use', name: '_no_tool', params: {}, partial: false },
+        //   params: {},
+        //   state: 'bad-input',
+        //   result: '',
+        //   formattedResult: 'No tool use block found. You must use exactly one tool',
+        //   uiState: {}
+        // })
+        // continue
+        break
       }
       const tool = this._tools[toolUse.name]
       const params = tool.validator(toolUse.params)

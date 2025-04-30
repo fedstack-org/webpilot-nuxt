@@ -2,7 +2,7 @@
   <div v-if="taskContext.messages.length > 0" class="w-full h-full flex flex-col items-stretch">
     <CopilotHeader />
     <NScrollbar ref="scrollbar" class="flex-1" content-style="overflow: hidden;">
-      <CopilotMessages />
+      <CopilotMessages :user-name />
     </NScrollbar>
     <CopilotInput :advanced />
     <CopilotFooter />
@@ -14,7 +14,7 @@
       </template>
       <div class="text-lg text-center font-medium pb-2">
         <slot name="welcome">
-          {{ welcome ?? '请输入您的问题' }}
+          {{ welcome ?? $t('webpilot.msg.welcome') }}
         </slot>
       </div>
       <CopilotInput :advanced :min-rows="4" :max-rows="8" />
@@ -29,6 +29,7 @@ import { NCard, NScrollbar } from 'naive-ui'
 defineProps<{
   welcome?: string
   advanced?: boolean
+  userName?: string
 }>()
 
 const scrollbar = useTemplateRef('scrollbar')

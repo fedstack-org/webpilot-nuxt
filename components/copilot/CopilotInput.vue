@@ -14,7 +14,9 @@
           </NTag>
         </template>
         <div>
-          <div class="text-center">可用工具</div>
+          <div class="text-center">
+            {{ $t('webpilot.control.available_tools') }}
+          </div>
           <div v-for="tool in tools" :key="tool.name" class="flex items-center gap-2">
             <NSwitch
               :value="!config.tools[tool.name]?.disabled"
@@ -37,7 +39,7 @@
               :disabled="!environment.tools.value[tool.name]?.needApproval"
               @update:checked="toggleToolApprove(tool.name)"
             >
-              自动允许
+              {{ $t('webpilot.control.auto_approve') }}
             </NCheckbox>
           </div>
         </div>
@@ -55,7 +57,9 @@
           </NTag>
         </template>
         <div>
-          <div class="text-center">注入指令</div>
+          <div class="text-center">
+            {{ $t('webpilot.control.available_instructions') }}
+          </div>
           <div class="grid grid-cols-1">
             <NCheckbox
               v-for="instruction in instructions"
@@ -86,7 +90,7 @@
       v-model:value="inputValue"
       type="textarea"
       :autosize="{ minRows, maxRows }"
-      :placeholder="'请输入消息（⏎发送 ⇧+⏎换行）'"
+      :placeholder="$t('webpilot.msg.input_placeholder')"
       :disabled="!!disabled"
       @keydown="handleKeydown"
     />

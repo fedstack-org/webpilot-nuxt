@@ -3,7 +3,7 @@
     <NCard size="small">
       <template #header>
         <div class="flex items-center gap-2">
-          <NAvatar class="bg-blue">{{ (userName ?? '用户').slice(-2) }}</NAvatar>
+          <NAvatar class="bg-blue">{{ (userName ?? $t('webpilot.term.user')).slice(-2) }}</NAvatar>
         </div>
       </template>
       <MarkdownContent

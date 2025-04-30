@@ -17,7 +17,7 @@
       v-model:value="message.uiState!.input"
       type="textarea"
       :autosize="{ minRows: 1, maxRows: 4 }"
-      :placeholder="'请回答（⏎提交 ⇧+⏎换行）'"
+      :placeholder="$t('webpilot.msg.ask_followup_question_reply_placeholder')"
       :disabled="disabled"
       @keydown="handleKeydown"
     />
