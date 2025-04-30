@@ -1,3 +1,1 @@
-# AI Base
-
-智能应用基座（前端部分）
+# WebPilot Nuxt Layer
