@@ -1,7 +1,7 @@
 <template>
   <div v-if="taskContext.messages.length > 0" class="w-full h-full flex flex-col items-stretch">
     <CopilotHeader />
-    <NScrollbar ref="scrollbar" class="flex-1" content-style="overflow: hidden;">
+    <NScrollbar ref="scrollbar" class="flex-1" content-style="overflow: hidden">
       <CopilotMessages :user-name />
     </NScrollbar>
     <CopilotInput :advanced />

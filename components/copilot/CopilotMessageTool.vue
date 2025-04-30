@@ -31,7 +31,11 @@
             :renderer="metadata?.uiParams"
             :props="{ params: message.use.params }"
           />
-          <MarkdownContent v-else class="border rounded max-w-none shadow" :content="details" />
+          <div v-else class="w-0 min-w-full">
+            <NScrollbar x-scrollable class="max-h-10rem" content-style="overflow: hidden">
+              <MarkdownContent class="border rounded max-w-none shadow" :content="details" />
+            </NScrollbar>
+          </div>
         </NCollapseItem>
         <NCollapseItem
           v-if="message.result"
@@ -43,11 +47,14 @@
             :renderer="metadata?.uiResult"
             :props="{ result: message.result }"
           />
-          <MarkdownContent
-            v-else
-            class="border rounded max-w-none shadow"
-            :content="displayCode(message.formattedResult || '')"
-          />
+          <div v-else class="w-0 min-w-full">
+            <NScrollbar x-scrollable class="max-h-10rem" content-style="overflow: hidden">
+              <MarkdownContent
+                class="border rounded max-w-none shadow"
+                :content="displayCode(message.formattedResult || '')"
+              />
+            </NScrollbar>
+          </div>
         </NCollapseItem>
       </NCollapse>
 
@@ -78,7 +85,17 @@
 </template>
 
 <script setup lang="ts">
-import { NAlert, NAvatar, NButton, NCard, NCollapse, NCollapseItem, NIcon, NSpin } from 'naive-ui'
+import {
+  NAlert,
+  NAvatar,
+  NButton,
+  NCard,
+  NCollapse,
+  NCollapseItem,
+  NIcon,
+  NScrollbar,
+  NSpin
+} from 'naive-ui'
 
 const message = defineModel<IToolMessage>('message', { required: true })
 const { startStepTask, environment, config } = useCopilot()

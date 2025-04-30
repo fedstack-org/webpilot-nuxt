@@ -6,7 +6,7 @@
       ref="scrollbar"
       class="flex-1"
       :class="[$style['copilot-panel']]"
-      content-style="overflow: hidden;"
+      content-style="overflow: hidden"
     >
       <CopilotMessages :user-name />
     </NScrollbar>

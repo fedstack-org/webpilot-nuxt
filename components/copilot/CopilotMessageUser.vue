@@ -6,10 +6,12 @@
           <NAvatar class="bg-blue">{{ (userName ?? $t('webpilot.term.user')).slice(-2) }}</NAvatar>
         </div>
       </template>
-      <MarkdownContent
-        class="prose prose-sm max-w-none markdown-body bg-transparent!"
-        :content="message.content"
-      />
+      <div class="w-0 min-w-full">
+        <MarkdownContent
+          class="prose prose-sm min-w-full max-w-full markdown-body bg-transparent!"
+          :content="message.content"
+        />
+      </div>
     </NCard>
   </div>
 </template>
