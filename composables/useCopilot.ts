@@ -12,7 +12,7 @@ export interface IUseCopilotOptions {
 }
 
 const _useCopilot = ({
-  agent,
+  agent: agentOptions,
   createAgentRoot = false,
   global = false
 }: IUseCopilotOptions = {}) => {
@@ -26,7 +26,7 @@ const _useCopilot = ({
     config,
     toolFilter,
     instructionFilter
-  } = useAgent(createAgentRoot, agent)
+  } = useAgent(createAgentRoot, agentOptions)
   const quickActions = ref<ICopilotQuickAction[]>([])
   return {
     global,

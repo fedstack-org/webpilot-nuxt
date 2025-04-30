@@ -89,7 +89,7 @@ export interface IToolMessage {
 export type IAgentMessage = ITextMessage | IToolMessage
 
 export interface IEnvironmentConfig {
-  model: string
+  defaultModel?: string
 }
 
 export interface TextContent {
@@ -119,6 +119,7 @@ export function getSystemPrompt(params: ISystemPromptParams) {
 }
 
 export interface INextStepOptions {
+  model?: string
   toolFilter?: (tool: IAgentTool) => boolean
   instructionFilter?: (instruction: IAgentInstruction) => boolean
 }
@@ -133,7 +134,7 @@ export class Environment {
   tools
   instructions
 
-  constructor(llm: OpenAI, config: IEnvironmentConfig) {
+  constructor(llm: OpenAI, config: IEnvironmentConfig = {}) {
     this.llm = llm
     this.config = config
 
@@ -196,6 +197,8 @@ export class Environment {
   }
 
   async nextStep(taskContext: ITaskContext, options?: INextStepOptions) {
+    const model = options?.model ?? this.config.defaultModel
+    if (!model) throw new Error('No model provided')
     for (;;) {
       const messages: OpenAI.ChatCompletionMessageParam[] = [
         { role: 'system', content: await this._getSystemPrompt(options) },
@@ -206,7 +209,7 @@ export class Environment {
       console.groupEnd()
 
       const stream = this.llm.beta.chat.completions.stream({
-        model: this.config.model,
+        model,
         messages,
         stream: true
       })

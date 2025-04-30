@@ -1,7 +1,11 @@
 import OpenAI from 'openai'
 import type { InjectionKey } from 'vue'
 
-const _useEnvironment = () => {
+export interface IUseEnvironmentOptions {
+  config?: IEnvironmentConfig
+}
+
+const _useEnvironment = ({ config }: IUseEnvironmentOptions = {}) => {
   const { $auth } = useNuxtApp()
   const openai = new OpenAI({
     apiKey: 'sk-fake',
@@ -15,18 +19,18 @@ const _useEnvironment = () => {
       return fetch(new Request(request, { headers }))
     }
   })
-  const environment = new Environment(openai, { model: 'deepseek-v3' })
+  const environment = new Environment(openai, config)
   return { openai, environment }
 }
 
 const environmentKey: InjectionKey<ReturnType<typeof _useEnvironment>> = Symbol('environment')
 
-export const useEnvironment = (root = false) => {
+export const useEnvironment = (root = false, options?: IUseEnvironmentOptions) => {
   if (!root) {
     const provided = inject(environmentKey, null)
     if (provided) return provided
   }
-  const created = _useEnvironment()
+  const created = _useEnvironment(options)
   provide(environmentKey, created)
   return created
 }

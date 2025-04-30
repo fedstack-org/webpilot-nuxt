@@ -8,17 +8,19 @@ export interface IAgentInstructionConfig {
 }
 
 export interface IUseAgentOptions {
+  environment?: IUseEnvironmentOptions
   createEnvironmentRoot?: boolean
   toolFilter?: (tool: IAgentTool) => boolean
   instructionFilter?: (instruction: IAgentInstruction) => boolean
 }
 
 const _useAgent = ({
+  environment: environmentOptions,
   createEnvironmentRoot = false,
   toolFilter = () => true,
   instructionFilter = () => true
 }: IUseAgentOptions = {}) => {
-  const { environment } = useEnvironment(createEnvironmentRoot)
+  const { environment } = useEnvironment(createEnvironmentRoot, environmentOptions)
   const taskContext = ref<ITaskContext>({ messages: [] })
   const startStepTask = useTask(
     () =>
