@@ -3,7 +3,7 @@
     <NCard size="small">
       <template #header>
         <div class="flex items-center gap-2">
-          <NAvatar class="bg-blue">{{ ($api.profile.value.name ?? '用户').slice(-2) }}</NAvatar>
+          <NAvatar class="bg-blue">{{ (userName ?? '用户').slice(-2) }}</NAvatar>
         </div>
       </template>
       <MarkdownContent
@@ -17,9 +17,8 @@
 <script setup lang="ts">
 import { NAvatar, NCard } from 'naive-ui'
 
-const { $api } = useNuxtApp()
-
 defineProps<{
   message: ITextMessage
+  userName?: string
 }>()
 </script>

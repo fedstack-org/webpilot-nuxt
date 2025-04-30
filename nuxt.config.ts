@@ -1,5 +1,3 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
-
 const { host: SERVER_HOST, protocol: SERVER_PROTOCOL } = new URL(
   process.env.SERVER_BASE || 'http://localhost:4010'
 )
@@ -17,12 +15,15 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n'
   ],
   devtools: { enabled: true },
-  runtimeConfig: {},
-  uaaa: {
-    issuer: process.env.UAAA_URL ?? 'https://unifiedauth.pku.edu.cn',
-    issuerAppId: process.env.UAAA_ISSUER_ID ?? 'uaaa',
-    clientAppId: process.env.UAAA_CLIENT_ID ?? 'cn.edu.pku.aibase',
-    serverAppId: process.env.UAAA_SERVER_ID ?? 'cn.edu.pku.aibase'
+  runtimeConfig: {
+    public: {
+      uaaa: {
+        issuer: 'https://unifiedauth.pku.edu.cn',
+        clientAppId: 'cn.edu.pku.aibase',
+        serverAppId: 'cn.edu.pku.aibase',
+        issuerAppId: 'uaaa'
+      }
+    }
   },
   nitro: {
     devProxy: {

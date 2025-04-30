@@ -4,24 +4,20 @@
     <NScrollbar ref="scrollbar" class="flex-1" content-style="overflow: hidden;">
       <CopilotMessages />
     </NScrollbar>
-    <CopilotInput />
+    <CopilotInput :advanced />
     <CopilotFooter />
   </div>
   <div v-else>
     <NCard :bordered="false">
       <template #header>
-        <div class="text-center">
-          <div>
-            <img src="/cat.svg" class="h-32" />
-          </div>
-          <div class="text-2xl">{{ title ?? '智能助手' }}</div>
-        </div>
+        <slot name="header" />
       </template>
       <div class="text-lg text-center font-medium pb-2">
-        <span>{{ $api.profile.value.name ?? '您好' }}</span>
-        ，{{ welcome ?? '请输入您的问题' }}
+        <slot name="welcome">
+          {{ welcome ?? '请输入您的问题' }}
+        </slot>
       </div>
-      <CopilotInput :min-rows="4" :max-rows="8" />
+      <CopilotInput :advanced :min-rows="4" :max-rows="8" />
       <CopilotFooter />
     </NCard>
   </div>
@@ -31,8 +27,8 @@
 import { NCard, NScrollbar } from 'naive-ui'
 
 defineProps<{
-  title?: string
   welcome?: string
+  advanced?: boolean
 }>()
 
 const scrollbar = useTemplateRef('scrollbar')

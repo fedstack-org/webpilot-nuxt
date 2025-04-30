@@ -20,25 +20,14 @@
               <ToolsProvider />
               <div class="flex-1" />
               <div class="flex items-center space-x-4">
-                <AppUserSettings />
                 <AppLogout />
                 <AppLocaleSelect />
               </div>
             </NLayoutHeader>
             <!-- Nav + Content -->
-            <NLayout has-sider>
-              <NLayoutSider
-                bordered
-                show-trigger="arrow-circle"
-                :collapsed-width="0"
-                trigger-class="h-8! w-8!"
-              >
-                <AppMenu />
-              </NLayoutSider>
-              <NLayoutContent content-class="px-2 grid justify-items-center">
-                <NuxtPage />
-              </NLayoutContent>
-            </NLayout>
+            <NLayoutContent content-class="px-2 grid justify-items-center">
+              <NuxtPage />
+            </NLayoutContent>
           </NLayout>
           <NLayoutSider
             :native-scrollbar="false"

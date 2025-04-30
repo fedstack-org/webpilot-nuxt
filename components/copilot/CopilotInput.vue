@@ -1,6 +1,6 @@
 <template>
   <NCard size="small">
-    <div v-if="!easyMode" class="flex gap-2 items-center mb-2">
+    <div v-if="advanced" class="flex gap-2 items-center mb-2">
       <NPopover trigger="click">
         <template #trigger>
           <NTag type="info" size="small" class="cursor-pointer">
@@ -30,7 +30,10 @@
               </span>
             </div>
             <NCheckbox
-              :checked="!environment.tools.value[tool.name]?.needApproval || config.tools[tool.name]?.approved"
+              :checked="
+                !environment.tools.value[tool.name]?.needApproval ||
+                config.tools[tool.name]?.approved
+              "
               :disabled="!environment.tools.value[tool.name]?.needApproval"
               @update:checked="toggleToolApprove(tool.name)"
             >
@@ -88,7 +91,12 @@
       @keydown="handleKeydown"
     />
     <div v-if="!taskContext.messages.length" class="mt-2 flex flex-col items-stretch">
-      <NButton v-for="action of quickActions" :key="action.name" size="small" @click="handleUserInput(action.instruction)">
+      <NButton
+        v-for="action of quickActions"
+        :key="action.name"
+        size="small"
+        @click="handleUserInput(action.instruction)"
+      >
         {{ action.name }}
       </NButton>
     </div>
@@ -98,27 +106,45 @@
 <script setup lang="ts">
 import { NButton, NCard, NCheckbox, NIcon, NInput, NPopover, NSwitch, NTag } from 'naive-ui'
 
-const { minRows = 1, maxRows = 4 } = defineProps<{
+const {
+  minRows = 1,
+  maxRows = 4,
+  advanced = true
+} = defineProps<{
   minRows?: number
   maxRows?: number
+  advanced?: boolean
 }>()
-const { easyMode } = useEasyMode()
 const inputValue = ref('')
-const { handleUserInput, startStepTask, environment, config, taskContext, quickActions, toolFilter, instructionFilter } =
-  useCopilot()
+const {
+  handleUserInput,
+  startStepTask,
+  environment,
+  config,
+  taskContext,
+  quickActions,
+  toolFilter,
+  instructionFilter
+} = useCopilot()
 const disabled = computed(() => {
   if (startStepTask.loading.value) {
     return 'loading'
   }
   const lastMsg = taskContext.value.messages.at(-1)
-  if (lastMsg && lastMsg.role === 'tool' && ['pending-approval', 'pending-response'].includes(lastMsg.state)) {
+  if (
+    lastMsg &&
+    lastMsg.role === 'tool' &&
+    ['pending-approval', 'pending-response'].includes(lastMsg.state)
+  ) {
     return 'pending-tool'
   }
   return ''
 })
 
 const tools = computed(() => Object.values(environment.tools.value).filter(toolFilter))
-const instructions = computed(() => Object.values(environment.instructions.value).filter(instructionFilter))
+const instructions = computed(() =>
+  Object.values(environment.instructions.value).filter(instructionFilter)
+)
 
 const handleKeydown = (e: KeyboardEvent) => {
   if (e.key === 'Enter' && !e.shiftKey) {

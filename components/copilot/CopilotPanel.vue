@@ -11,13 +11,17 @@
       <CopilotMessages />
     </NScrollbar>
     <CopilotNoMessages v-else :class="[$style['copilot-panel']]" />
-    <CopilotInput />
+    <CopilotInput :advanced />
     <CopilotFooter />
   </div>
 </template>
 
 <script setup lang="ts">
 import { NScrollbar } from 'naive-ui'
+
+defineProps<{
+  advanced?: boolean
+}>()
 
 const scrollbar = useTemplateRef('scrollbar')
 const { taskContext } = useCopilot()
