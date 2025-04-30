@@ -20,14 +20,18 @@ const _useAgent = ({
   toolFilter = () => true,
   instructionFilter = () => true
 }: IUseAgentOptions = {}) => {
-  const { environment } = useEnvironment(createEnvironmentRoot, environmentOptions)
+  const { openai, environment, currentModel, models } = useEnvironment(
+    createEnvironmentRoot,
+    environmentOptions
+  )
   const taskContext = ref<ITaskContext>({ messages: [] })
   const startStepTask = useTask(
     () =>
       environment.nextStep(taskContext.value, {
         toolFilter: (tool) => !config.tools[tool.name]?.disabled && toolFilter(tool),
         instructionFilter: (instruction) =>
-          !config.instructions[instruction.name]?.disabled && instructionFilter(instruction)
+          !config.instructions[instruction.name]?.disabled && instructionFilter(instruction),
+        model: currentModel.value
       }),
     { toast: false }
   )
@@ -48,7 +52,10 @@ const _useAgent = ({
     instructions: {} as Record<string, IAgentInstructionConfig>
   })
   return {
+    openai,
     environment,
+    currentModel,
+    models,
     taskContext,
     startStepTask,
     config,

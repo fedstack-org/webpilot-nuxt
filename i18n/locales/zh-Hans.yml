@@ -27,6 +27,7 @@ webpilot:
     attempt_completion_feedback_placeholder: 请输入反馈（⏎提交 ⇧+⏎换行）
     ask_followup_question_reply_placeholder: 请回答（⏎提交 ⇧+⏎换行）
     welcome: 请输入您的问题
+    no_model: 未选择模型
   action:
     approve: 允许
     reject: 拒绝

@@ -76,14 +76,16 @@
         </div>
       </NPopover>
       <div class="flex-1" />
-      <NTag type="primary" size="small" class="cursor-pointer">
-        <template #icon>
-          <NIcon>
-            <div class="i-carbon:machine-learning-model" />
-          </NIcon>
-        </template>
-        DeekSeek V3
-      </NTag>
+      <NPopselect v-model:value="currentModel" :options="modelOptions" trigger="click">
+        <NTag type="primary" size="small" class="cursor-pointer">
+          <template #icon>
+            <NIcon>
+              <div class="i-carbon:machine-learning-model" />
+            </NIcon>
+          </template>
+          {{ currentModel || $t('webpilot.msg.no_model') }}
+        </NTag>
+      </NPopselect>
     </div>
     <NInput
       ref="inputRef"
@@ -108,7 +110,18 @@
 </template>
 
 <script setup lang="ts">
-import { NButton, NCard, NCheckbox, NIcon, NInput, NPopover, NSwitch, NTag } from 'naive-ui'
+import type { SelectOption } from 'naive-ui'
+import {
+  NButton,
+  NCard,
+  NCheckbox,
+  NIcon,
+  NInput,
+  NPopover,
+  NPopselect,
+  NSwitch,
+  NTag
+} from 'naive-ui'
 
 const {
   minRows = 1,
@@ -128,19 +141,27 @@ const {
   taskContext,
   quickActions,
   toolFilter,
-  instructionFilter
+  instructionFilter,
+  currentModel,
+  models
 } = useCopilot()
+
+const modelOptions = computed<SelectOption[]>(() =>
+  models.data.value.map((model) => ({
+    label: model.id,
+    value: model.id
+  }))
+)
+
 const disabled = computed(() => {
   if (startStepTask.loading.value) {
     return 'loading'
   }
   const lastMsg = taskContext.value.messages.at(-1)
-  if (
-    lastMsg &&
-    lastMsg.role === 'tool' &&
-    ['pending-approval', 'pending-response'].includes(lastMsg.state)
-  ) {
-    return 'pending-tool'
+  if (lastMsg?.role === 'tool') {
+    if (['pending-approval', 'pending-response'].includes(lastMsg.state)) {
+      return 'pending-tool'
+    }
   }
   return ''
 })

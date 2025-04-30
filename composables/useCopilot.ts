@@ -18,7 +18,10 @@ const _useCopilot = ({
 }: IUseCopilotOptions = {}) => {
   const show = ref(true)
   const {
+    openai,
     environment,
+    currentModel,
+    models,
     taskContext,
     startStepTask,
     handleUserInput,
@@ -31,7 +34,10 @@ const _useCopilot = ({
   return {
     global,
     show,
+    openai,
     environment,
+    currentModel,
+    models,
     taskContext,
     startStepTask,
     handleUserInput,

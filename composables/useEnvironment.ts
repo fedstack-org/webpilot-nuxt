@@ -3,9 +3,17 @@ import type { InjectionKey } from 'vue'
 
 export interface IUseEnvironmentOptions {
   config?: IEnvironmentConfig
+  storageKey?: string
+  initialModel?: string
+  modelFilter?: (model: OpenAI.Models.Model) => boolean
 }
 
-const _useEnvironment = ({ config }: IUseEnvironmentOptions = {}) => {
+const _useEnvironment = ({
+  config,
+  storageKey,
+  initialModel = '',
+  modelFilter = () => true
+}: IUseEnvironmentOptions = {}) => {
   const { $auth } = useNuxtApp()
   const openai = new OpenAI({
     apiKey: 'sk-fake',
@@ -20,7 +28,26 @@ const _useEnvironment = ({ config }: IUseEnvironmentOptions = {}) => {
     }
   })
   const environment = new Environment(openai, config)
-  return { openai, environment }
+  const environmentId = useId() || 'environment'
+  const currentModel = storageKey
+    ? useLocalStorage(`environment-model-${storageKey}`, initialModel)
+    : ref(initialModel)
+  const models = useAsyncData(
+    computed(() => `model-list-${environmentId}`),
+    async () => {
+      const { data } = await openai.models.list()
+      const filtered = data.filter(modelFilter)
+      if (!filtered.some((model) => model.id === currentModel.value)) {
+        currentModel.value = ''
+      }
+      if (!currentModel.value && filtered.length > 0) {
+        currentModel.value = filtered[0].id
+      }
+      return filtered
+    },
+    { default: () => [] }
+  )
+  return { openai, environment, currentModel, models }
 }
 
 const environmentKey: InjectionKey<ReturnType<typeof _useEnvironment>> = Symbol('environment')

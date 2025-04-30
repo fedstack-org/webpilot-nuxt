@@ -35,7 +35,7 @@
             :width="320"
             content-style="height: 100%"
           >
-            <CopilotPanel />
+            <CopilotPanel advanced />
           </NLayoutSider>
         </NLayout>
       </NDialogProvider>
@@ -66,7 +66,16 @@ useHead({
   }
 })
 
-useCopilot(true, { global: true })
+useCopilot(true, {
+  global: true,
+  agent: {
+    environment: {
+      initialModel: 'deepseek-v3',
+      modelFilter: (model) => [/^gpt-/i, /^o\d+/i, /^deepseek-/i].some((re) => re.test(model.id)),
+      storageKey: 'default'
+    }
+  }
+})
 const { nLocale } = useLocale()
 
 const themeOverrides = computed<GlobalThemeOverrides>(() => {

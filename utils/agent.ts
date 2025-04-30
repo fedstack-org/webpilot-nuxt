@@ -221,9 +221,14 @@ export class Environment {
       const curMsg = taskContext.messages[taskContext.messages.length - 1] as ITextMessage
 
       for await (const chunk of stream) {
-        const deltaContent = chunk.choices[0]?.delta?.content
-        if (deltaContent) {
-          curMsg.content += deltaContent
+        const delta = chunk.choices[0]?.delta
+        if (!delta) continue
+        if (delta.content) {
+          curMsg.content += delta.content
+        }
+        if ('reasoning_content' in delta) {
+          curMsg.thought ??= ''
+          curMsg.thought += delta.reasoning_content
         }
       }
       const chatCompletion = await stream.finalChatCompletion()

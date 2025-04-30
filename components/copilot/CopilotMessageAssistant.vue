@@ -19,7 +19,7 @@
           <div class="i-carbon:checkmark" />
         </NIcon>
       </template>
-      <NCollapse v-if="message?.thought">
+      <NCollapse v-if="message?.thought" class="mb-2">
         <NCollapseItem
           :title="
             $t(
