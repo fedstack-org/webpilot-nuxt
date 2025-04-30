@@ -21,7 +21,7 @@
       <CopilotToolCompletion v-else-if="message.use.name === 'attempt_completion'" :message />
       <NAlert
         v-else-if="message.state === 'bad-input'"
-        :title="$t('webpilot.msg.tool_use_bad_input_alert')"
+        :title="$t('webpilot.msg.tool_use_bad_input')"
         type="error"
       />
       <NCollapse v-else :default-expanded-names="['params', 'result']">
