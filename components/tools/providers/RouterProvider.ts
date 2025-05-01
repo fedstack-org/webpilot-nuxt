@@ -45,7 +45,8 @@ export default defineComponent(() => {
       return parsed
     },
     handler: async ({ path, query }) => {
-      router.push({ path, query })
+      await router.push({ path, query })
+      await new Promise((resolve) => setTimeout(resolve, 1000))
       return `Navigated to \`${path}\` with query \`${JSON.stringify(query)}\``
     },
     formatter: (result) => result,
