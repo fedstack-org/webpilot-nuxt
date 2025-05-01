@@ -31,6 +31,7 @@ const _useCopilot = ({
     instructionFilter
   } = useAgent(createAgentRoot, agentOptions)
   const quickActions = ref<ICopilotQuickAction[]>([])
+  const userInput = ref('')
   return {
     global,
     show,
@@ -45,7 +46,8 @@ const _useCopilot = ({
     config,
     quickActions,
     toolFilter,
-    instructionFilter
+    instructionFilter,
+    userInput
   }
 }
 

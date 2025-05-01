@@ -88,8 +88,7 @@
       </NPopselect>
     </div>
     <NInput
-      ref="inputRef"
-      v-model:value="inputValue"
+      v-model:value="userInput"
       type="textarea"
       :autosize="{ minRows, maxRows }"
       :placeholder="$t('webpilot.msg.input_placeholder')"
@@ -132,7 +131,7 @@ const {
   maxRows?: number
   advanced?: boolean
 }>()
-const inputValue = ref('')
+
 const {
   handleUserInput,
   startStepTask,
@@ -143,7 +142,8 @@ const {
   toolFilter,
   instructionFilter,
   currentModel,
-  models
+  models,
+  userInput
 } = useCopilot()
 
 const modelOptions = computed<SelectOption[]>(() =>
@@ -174,8 +174,8 @@ const instructions = computed(() =>
 const handleKeydown = (e: KeyboardEvent) => {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault()
-    handleUserInput(inputValue.value)
-    inputValue.value = ''
+    handleUserInput(userInput.value)
+    userInput.value = ''
   }
 }
 
