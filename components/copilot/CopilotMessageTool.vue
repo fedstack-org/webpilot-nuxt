@@ -32,7 +32,7 @@
             :props="{ params: message.use.params }"
           />
           <div v-else class="w-0 min-w-full">
-            <NScrollbar x-scrollable class="max-h-10rem" content-style="overflow: hidden">
+            <NScrollbar x-scrollable class="max-h-10rem" content-class="overflow-hidden">
               <MarkdownContent class="border rounded max-w-none shadow" :content="details" />
             </NScrollbar>
           </div>
@@ -48,7 +48,7 @@
             :props="{ result: message.result }"
           />
           <div v-else class="w-0 min-w-full">
-            <NScrollbar x-scrollable class="max-h-10rem" content-style="overflow: hidden">
+            <NScrollbar x-scrollable class="max-h-10rem" content-class="overflow-hidden">
               <MarkdownContent
                 class="border rounded max-w-none shadow"
                 :content="displayCode(message.formattedResult || '')"

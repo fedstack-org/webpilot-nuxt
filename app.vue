@@ -29,12 +29,7 @@
               <NuxtPage />
             </NLayoutContent>
           </NLayout>
-          <NLayoutSider
-            :native-scrollbar="false"
-            bordered
-            :width="320"
-            content-style="height: 100%"
-          >
+          <NLayoutSider :native-scrollbar="false" bordered :width="320" content-class="h-full">
             <CopilotPanel advanced />
           </NLayoutSider>
         </NLayout>

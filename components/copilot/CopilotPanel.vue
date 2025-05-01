@@ -4,9 +4,10 @@
     <NScrollbar
       v-if="taskContext.messages.length"
       ref="scrollbar"
+      content-class="overflow-hidden"
       class="flex-1"
       :class="[$style['copilot-panel']]"
-      content-style="overflow: hidden"
+      :on-scroll
     >
       <CopilotMessages :user-name />
     </NScrollbar>
@@ -43,6 +44,24 @@ watch(
   () => stickyToBottom.value && scrollToBottom(),
   { immediate: true, deep: true }
 )
+
+watch(
+  () => taskContext.value.messages.length,
+  (val) => val || (stickyToBottom.value = true),
+  { immediate: true }
+)
+
+let previousScrollTop = 0
+const onScroll = (e: Event) => {
+  const { scrollTop, scrollHeight, clientHeight } = e.target as HTMLElement
+  const threshold = 16
+  if (scrollTop + clientHeight >= scrollHeight - threshold) {
+    stickyToBottom.value = true
+  } else if (scrollTop < previousScrollTop) {
+    stickyToBottom.value = false
+  }
+  previousScrollTop = scrollTop
+}
 </script>
 
 <style lang="css" module>
