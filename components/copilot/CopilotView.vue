@@ -7,6 +7,35 @@
     <CopilotInput :advanced />
     <CopilotFooter />
   </div>
+  <div v-else-if="tasks.data.value.length && showTasks">
+    <NScrollbar class="flex-1" content-class="overflow-hidden flex flex-col gap-2 p-4 items-center">
+      <div class="self-stretch flex items-center">
+        <div class="flex-1 flex justify-start">
+          <NButton size="small" @click="showTasks = false">
+            <template #icon>
+              <NIcon>
+                <div class="i-carbon:chevron-left" />
+              </NIcon>
+            </template>
+          </NButton>
+        </div>
+        {{ $t('webpilot.msg.all_tasks') }}
+        <div class="flex-1 flex justify-end">
+          <NButton
+            size="small"
+            type="error"
+            :loading="clearTasks.loading.value"
+            @click="clearTasks.execute()"
+          >
+            <NIcon>
+              <div class="i-carbon:trash-can" />
+            </NIcon>
+          </NButton>
+        </div>
+      </div>
+      <CopilotTask v-for="task in tasks.data.value" :key="task._id" :task />
+    </NScrollbar>
+  </div>
   <div v-else>
     <NCard :bordered="false">
       <template #header>
@@ -20,11 +49,16 @@
       <CopilotInput :advanced :min-rows="4" :max-rows="8" />
       <CopilotFooter />
     </NCard>
+    <div v-if="tasks.data.value.length" class="flex justify-center">
+      <NButton size="small" type="primary" secondary @click="showTasks = true">
+        {{ $t('webpilot.msg.show_all_tasks') }}
+      </NButton>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { NCard, NScrollbar } from 'naive-ui'
+import { NButton, NCard, NIcon, NScrollbar } from 'naive-ui'
 
 defineProps<{
   welcome?: string
@@ -33,7 +67,8 @@ defineProps<{
 }>()
 
 const scrollbar = useTemplateRef('scrollbar')
-const { taskContext } = useCopilot()
+const { taskContext, clearTasks, tasks } = useCopilot()
+const showTasks = ref(false)
 const stickyToBottom = ref(true)
 const scrollToBottom = useDebounceFn(
   () => {
@@ -54,7 +89,12 @@ watch(
 
 watch(
   () => taskContext.value.messages.length,
-  (val) => val || (stickyToBottom.value = true),
+  (val) => {
+    if (!val) {
+      stickyToBottom.value = true
+      showTasks.value = false
+    }
+  },
   { immediate: true }
 )
 

@@ -24,10 +24,15 @@ webpilot:
     tool_use_title_reject: 用户拒绝了{toolName}
     tool_use_title_want: 希望使用{toolName}
     recent_tasks: 最近的任务
+    no_recent_tasks: 没有最近的任务
     attempt_completion_feedback_placeholder: 请输入反馈（⏎提交 ⇧+⏎换行）
     ask_followup_question_reply_placeholder: 请回答（⏎提交 ⇧+⏎换行）
     welcome: 请输入您的问题
     no_model: 未选择模型
+    default_title: 新任务
+    show_all_tasks: 显示所有任务
+    all_tasks: 所有任务
+    clear_all_tasks: 清空所有
   action:
     approve: 允许
     reject: 拒绝

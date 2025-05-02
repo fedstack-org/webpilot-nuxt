@@ -24,9 +24,12 @@ webpilot:
     tool_use_title_reject: User rejected {toolName}
     tool_use_title_want: Wants to use {toolName}
     recent_tasks: Recent Tasks
+    no_recent_tasks: No recent tasks
     attempt_completion_feedback_placeholder: Enter feedback (⏎ to submit, ⇧+⏎ for newline)
     ask_followup_question_reply_placeholder: Please answer (⏎ to submit, ⇧+⏎ for newline)
     welcome: Please enter your question
+    no_model: No model selected
+    default_title: New Conversation
   action:
     approve: Approve
     reject: Reject

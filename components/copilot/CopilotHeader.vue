@@ -5,7 +5,13 @@
       {{ $t('webpilot.name') }}
     </h1>
     <div class="flex-1" />
-    <NButton secondary circle class="!h-8 !w-8" @click="newTask">
+    <NButton
+      secondary
+      circle
+      class="!h-8 !w-8"
+      :disabled="newTask.loading.value"
+      @click="newTask.execute()"
+    >
       <div class="i-carbon:add-comment text-lg" />
     </NButton>
     <NButton v-if="showClose" circle class="!h-8 !w-8" @click="show = false">

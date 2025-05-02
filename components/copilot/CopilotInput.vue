@@ -95,7 +95,10 @@
       :disabled="!!disabled"
       @keydown="handleKeydown"
     />
-    <div v-if="!taskContext.messages.length" class="mt-2 flex flex-col items-stretch">
+    <div
+      v-if="!taskContext.messages.length && quickActions.length"
+      class="mt-2 flex flex-col items-stretch"
+    >
       <NButton
         v-for="action of quickActions"
         :key="action.name"

@@ -124,6 +124,10 @@ export interface INextStepOptions {
   instructionFilter?: (instruction: IAgentInstruction) => boolean
 }
 
+export interface ISummarizeOptions {
+  model?: string
+}
+
 export class Environment {
   llm
   config
@@ -284,8 +288,49 @@ export class Environment {
     }
   }
 
+  async summarize(taskContext: ITaskContext, options?: ISummarizeOptions) {
+    const model = options?.model ?? this.config.defaultModel
+    if (!model) throw new Error('No model provided')
+    const messages: OpenAI.ChatCompletionMessageParam[] = [
+      {
+        role: 'system',
+        content: `
+You are a helpful assistant that summarizes the conversation between the user and the assistant.
+Your task is to summarize the conversation in a concise and clear manner, highlighting the key points and any important information.
+
+RULES:
+- The summary should be in a single paragraph WITHOUT any line breaks or formatting.
+- The summary should be concise and should not include any unnecessary details.
+- The summary will be used as the title of the conversation, so it should be a short, catchy phrase that captures the essence of the conversation.
+        `.trim()
+      },
+      ...(await this._convertToOpenAIMessages(taskContext.messages, 'summary'))
+    ]
+    if (messages.at(-1)?.role !== 'user') {
+      messages.push({
+        role: 'user',
+        content: ''
+      })
+    }
+    console.group('Summarize Info')
+    console.log('messages', messages)
+    console.groupEnd()
+    const completion = await this.llm.chat.completions.create({
+      model,
+      messages,
+      max_tokens: 1000,
+      temperature: 0
+    })
+    const summary = completion.choices[0].message.content ?? ''
+    console.group('Summarize Result')
+    console.log('summary', summary)
+    console.groupEnd()
+    return summary
+  }
+
   private async _convertToOpenAIMessages(
-    messages: IAgentMessage[]
+    messages: IAgentMessage[],
+    mode: 'normal' | 'summary' = 'normal'
   ): Promise<OpenAI.ChatCompletionMessageParam[]> {
     const result: OpenAI.ChatCompletionMessageParam[] = []
     for (const message of messages) {
@@ -323,7 +368,11 @@ export class Environment {
             content += message.formattedResult
             break
           default:
-            throw new Error(`Invalid tool state: ${message.state}`)
+            if (mode === 'summary') {
+              content += `[Tool is waiting for user response]\n`
+            } else {
+              throw new Error(`Invalid tool state: ${message.state}`)
+            }
         }
         result.push({ role: 'user', content })
       }

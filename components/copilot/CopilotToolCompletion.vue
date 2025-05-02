@@ -4,7 +4,7 @@
       class="max-w-none markdown-body bg-transparent!"
       :content="message?.use.params.result ?? ''"
     />
-    <NButton :disabled="disabled" @click="newTask">
+    <NButton :disabled="disabled" :loading="newTask.loading.value" @click="newTask.execute()">
       {{ $t('webpilot.action.new_task') }}
     </NButton>
     <NInput
