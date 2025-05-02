@@ -56,6 +56,7 @@ export interface IUseAgentOptions {
   toolFilter?: (tool: IAgentTool) => boolean
   instructionFilter?: (instruction: IAgentInstruction) => boolean
   storage?: IAgentTaskStorageProvider
+  storageKey?: MaybeRef<string>
 }
 
 const _useAgent = ({
@@ -63,13 +64,14 @@ const _useAgent = ({
   createEnvironmentRoot = false,
   toolFilter = () => true,
   instructionFilter = () => true,
-  storage = new AgentTaskStorageProviderDefault()
+  storage = new AgentTaskStorageProviderDefault(),
+  storageKey = 'agent_tasks'
 }: IUseAgentOptions = {}) => {
   const { openai, environment, currentModel, models } = useEnvironment(
     createEnvironmentRoot,
     environmentOptions
   )
-  const tasks = useAsyncData(storage.getTasks.bind(storage), { default: () => [] })
+  const tasks = useAsyncData(storageKey, storage.getTasks.bind(storage), { default: () => [] })
   const recentTasks = computed(() => tasks.data.value.slice(0, 5))
   const saveTask = useTask(
     async () => {
