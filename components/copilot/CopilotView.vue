@@ -47,13 +47,16 @@
         </slot>
       </div>
       <CopilotInput :advanced :min-rows="4" :max-rows="8" />
+      <div v-if="tasks.data.value.length" class="flex justify-center space-x-2 mt-2">
+        <NButton type="primary" :disabled="!userInput" @click="handleUserInput(userInput)">
+          {{ $t('webpilot.msg.start_task') }}
+        </NButton>
+        <NButton type="info" secondary @click="showTasks = true">
+          {{ $t('webpilot.msg.show_all_tasks') }}
+        </NButton>
+      </div>
       <CopilotFooter />
     </NCard>
-    <div v-if="tasks.data.value.length" class="flex justify-center">
-      <NButton size="small" type="primary" secondary @click="showTasks = true">
-        {{ $t('webpilot.msg.show_all_tasks') }}
-      </NButton>
-    </div>
   </div>
 </template>
 
@@ -67,7 +70,7 @@ defineProps<{
 }>()
 
 const scrollbar = useTemplateRef('scrollbar')
-const { taskContext, clearTasks, tasks } = useCopilot()
+const { taskContext, clearTasks, tasks, userInput, handleUserInput } = useCopilot()
 const showTasks = ref(false)
 const stickyToBottom = ref(true)
 const scrollToBottom = useDebounceFn(
