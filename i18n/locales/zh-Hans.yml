@@ -36,6 +36,8 @@ webpilot:
     start_task: 开始任务
     clear_tasks_confirm: 您确定要清除所有任务吗？
     delete_task_confirm: 您确定要删除此任务吗？
+    edit_task_title: 编辑任务标题
+    summarize_task_confirm: 是否重新生成任务标题？
   action:
     approve: 允许
     reject: 拒绝
