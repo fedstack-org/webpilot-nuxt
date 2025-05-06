@@ -1,7 +1,7 @@
 <template>
   <div v-if="taskContext.messages.length > 0" class="w-full h-full flex flex-col items-stretch">
     <CopilotHeader />
-    <NScrollbar ref="scrollbar" class="flex-1" content-class="overflow-hidden" :on-scroll>
+    <NScrollbar ref="scrollbar" class="flex-1" content-class="overflow-hidden" @scroll="onScroll">
       <CopilotMessages :user-name />
     </NScrollbar>
     <CopilotInput :advanced />
@@ -21,16 +21,16 @@
         </div>
         {{ $t('webpilot.msg.all_tasks') }}
         <div class="flex-1 flex justify-end">
-          <NButton
-            size="small"
-            type="error"
-            :loading="clearTasks.loading.value"
-            @click="clearTasks.execute()"
-          >
-            <NIcon>
-              <div class="i-carbon:trash-can" />
-            </NIcon>
-          </NButton>
+          <NPopconfirm @positive-click="clearTasks.execute()">
+            <template #trigger>
+              <NButton size="small" type="error" :loading="clearTasks.loading.value">
+                <NIcon>
+                  <div class="i-carbon:trash-can" />
+                </NIcon>
+              </NButton>
+            </template>
+            {{ $t('webpilot.msg.clear_tasks_confirm') }}
+          </NPopconfirm>
         </div>
       </div>
       <CopilotTask v-for="task in tasks.data.value" :key="task._id" :task />
@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { NButton, NCard, NIcon, NScrollbar } from 'naive-ui'
+import { NButton, NCard, NIcon, NPopconfirm, NScrollbar } from 'naive-ui'
 
 defineProps<{
   welcome?: string

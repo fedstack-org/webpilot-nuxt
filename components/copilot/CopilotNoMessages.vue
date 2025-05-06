@@ -16,16 +16,16 @@
         </div>
         {{ $t('webpilot.msg.all_tasks') }}
         <div class="flex-1 flex justify-end">
-          <NButton
-            size="small"
-            type="error"
-            :loading="clearTasks.loading.value"
-            @click="clearTasks.execute()"
-          >
-            <NIcon>
-              <div class="i-carbon:trash-can" />
-            </NIcon>
-          </NButton>
+          <NPopconfirm @positive-click="clearTasks.execute()">
+            <template #trigger>
+              <NButton size="small" type="error" :loading="clearTasks.loading.value">
+                <NIcon>
+                  <div class="i-carbon:trash-can" />
+                </NIcon>
+              </NButton>
+            </template>
+            {{ $t('webpilot.msg.clear_tasks_confirm') }}
+          </NPopconfirm>
         </div>
       </div>
       <CopilotTask v-for="task in tasks.data.value" :key="task._id" :task />
@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { NButton, NIcon, NScrollbar } from 'naive-ui'
+import { NButton, NIcon, NPopconfirm, NScrollbar } from 'naive-ui'
 
 const showAllTasks = ref(false)
 const { tasks, recentTasks, clearTasks } = useCopilot()

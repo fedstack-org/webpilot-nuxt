@@ -34,6 +34,8 @@ webpilot:
     all_tasks: 所有任务
     clear_all_tasks: 清空所有
     start_task: 开始任务
+    clear_tasks_confirm: 您确定要清除所有任务吗？
+    delete_task_confirm: 您确定要删除此任务吗？
   action:
     approve: 允许
     reject: 拒绝

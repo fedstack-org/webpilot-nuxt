@@ -7,7 +7,7 @@
       content-class="overflow-hidden"
       class="flex-1"
       :class="[$style['copilot-panel']]"
-      :on-scroll
+      @scroll="onScroll"
     >
       <CopilotMessages :user-name />
     </NScrollbar>
