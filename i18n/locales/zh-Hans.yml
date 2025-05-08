@@ -13,7 +13,7 @@ webpilot:
     thinking: 思考中
     thought: 思考内容
     direct_tool_use: 我将直接使用工具来完成任务
-    tool_use_title: 智能助手{toolTitle}
+    tool_use_title: '@:webpilot.name {toolTitle}'
     tool_use_bad_input: AI遇到了问题，重试中
     tool_use_params: 工具调用详情
     tool_use_result: 工具调用结果

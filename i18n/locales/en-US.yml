@@ -13,7 +13,7 @@ webpilot:
     thinking: Thinking
     thought: Thought
     direct_tool_use: I will use a tool directly to complete the task
-    tool_use_title: Copilot {toolTitle}
+    tool_use_title: '@:webpilot.name {toolTitle}'
     tool_use_bad_input: AI encountered a problem, retrying
     tool_use_params: Tool Call Details
     tool_use_result: Tool Call Result
