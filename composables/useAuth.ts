@@ -12,7 +12,7 @@ export const useAuth = () => {
         permissions: [
           `{{server}}/**`,
           `{{issuer}}/session/claim`,
-          `{{issuer}}/session/slient_authorize`
+          `{{issuer}}/session/silent_authorize`
         ],
         additionalParams: {}
       })
