@@ -65,8 +65,8 @@ useCopilot(true, {
   global: true,
   agent: {
     environment: {
-      initialModel: 'deepseek-v3',
-      modelFilter: (model) => [/^gpt-/i, /^o\d+/i, /^deepseek-/i].some((re) => re.test(model.id)),
+      initialModel: 'gpt-4.1',
+      modelFilter: (model) => [/^gpt-/i, /^o\d+/i].some((re) => re.test(model.id)),
       storageKey: 'default'
     }
   }
