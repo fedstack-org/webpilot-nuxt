@@ -1,5 +1,8 @@
 <template>
-  <div v-if="taskContext.messages.length > 0" class="w-full h-full flex flex-col items-stretch">
+  <div
+    v-if="taskContext.messages.length > 0"
+    class="w-0 min-w-full h-full flex flex-col items-stretch"
+  >
     <CopilotHeader />
     <NScrollbar ref="scrollbar" class="flex-1" content-class="overflow-hidden" @scroll="onScroll">
       <CopilotMessages :user-name />
@@ -8,7 +11,10 @@
     <CopilotFooter />
   </div>
   <div v-else-if="tasks.data.value.length && showTasks">
-    <NScrollbar class="flex-1" content-class="overflow-hidden flex flex-col gap-2 p-4 items-center">
+    <NScrollbar
+      class="w-0 min-w-full flex-1"
+      content-class="overflow-hidden flex flex-col gap-2 p-4 items-center"
+    >
       <div class="self-stretch flex items-center">
         <div class="flex-1 flex justify-start">
           <NButton size="small" @click="showTasks = false">
