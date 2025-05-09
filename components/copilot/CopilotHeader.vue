@@ -11,7 +11,13 @@
       @positive-click="summarizeTask.execute()"
     >
       <template #trigger>
-        <NButton secondary circle class="!h-8 !w-8" :loading="summarizeTask.loading.value">
+        <NButton
+          secondary
+          circle
+          class="!h-8 !w-8"
+          :disabled="saveTask.loading.value"
+          :loading="summarizeTask.loading.value && !saveTask.loading.value"
+        >
           <template #icon>
             <NIcon>
               <div class="i-simple-icons:googlegemini" />
