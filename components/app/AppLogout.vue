@@ -19,7 +19,7 @@ const logout = useTask(async () => {
 const showLogoutDialog = () => {
   dialog.warning({
     title: '确认',
-    content: '您正在登出AI课程论坛系统',
+    content: '您正在登出AI Base系统',
     positiveText: '确认',
     negativeText: '取消',
     onPositiveClick: () => logout.execute()
