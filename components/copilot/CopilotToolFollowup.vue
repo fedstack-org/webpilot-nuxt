@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-2">
     <MarkdownContent
-      class="max-w-none markdown-body bg-transparent!"
+      class="max-w-none bg-transparent!"
       :content="message?.use.params.question ?? ''"
     />
     <NButton

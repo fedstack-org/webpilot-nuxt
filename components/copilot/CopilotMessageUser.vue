@@ -8,12 +8,7 @@
           </NAvatar>
         </div>
       </template>
-      <div class="w-0 min-w-full">
-        <MarkdownContent
-          class="prose prose-sm min-w-full max-w-full markdown-body bg-transparent!"
-          :content="message.content"
-        />
-      </div>
+      <MarkdownContent class="w-0 min-w-full bg-transparent!" :content="message.content" />
     </NCard>
   </div>
 </template>

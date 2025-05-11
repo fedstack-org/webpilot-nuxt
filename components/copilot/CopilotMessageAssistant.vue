@@ -30,23 +30,14 @@
           "
         >
           <NCard embedded>
-            <div class="w-0 min-w-full">
-              <MarkdownContent
-                class="prose prose-sm min-w-full max-w-full bg-transparent!"
-                :content="message?.thought"
-              />
-            </div>
+            <MarkdownContent class="w-0 min-w-full bg-transparent!" :content="message?.thought" />
           </NCard>
         </NCollapseItem>
       </NCollapse>
-      <div class="w-0 min-w-full">
-        <MarkdownContent
-          class="prose prose-sm min-w-full max-w-full bg-transparent!"
-          :content="
-            message?.content || (message?.partial ? '' : $t('webpilot.msg.direct_tool_use'))
-          "
-        />
-      </div>
+      <MarkdownContent
+        class="w-0 min-w-full bg-transparent!"
+        :content="message?.content || (message?.partial ? '' : $t('webpilot.msg.direct_tool_use'))"
+      />
     </NCard>
   </div>
 </template>
