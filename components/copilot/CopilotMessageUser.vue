@@ -1,9 +1,11 @@
 <template>
-  <div class="p-2">
+  <div class="px-2">
     <NCard size="small">
       <template #header>
         <div class="flex items-center gap-2">
-          <NAvatar class="bg-blue">{{ (userName ?? $t('webpilot.term.user')).slice(-2) }}</NAvatar>
+          <NAvatar size="small" class="bg-blue">
+            {{ (userName ?? $t('webpilot.term.user')).slice(-2) }}
+          </NAvatar>
         </div>
       </template>
       <div class="w-0 min-w-full">

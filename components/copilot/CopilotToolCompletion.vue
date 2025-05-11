@@ -36,8 +36,7 @@ const handleKeydown = (e: KeyboardEvent) => {
 }
 
 const handleAnswer = (answer: string) => {
-  message.value.result = answer
-  message.value.formattedResult = answer
+  message.value.feedback = answer
   message.value.state = 'rejected'
   startStepTask.execute()
 }

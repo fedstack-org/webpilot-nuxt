@@ -1,10 +1,10 @@
 <template>
-  <div class="p-2">
+  <div class="px-2">
     <NCard size="small">
       <template #header>
         <div class="flex items-center gap-2">
-          <NAvatar class="bg-[#990000]">
-            <NIcon size="22">
+          <NAvatar size="small" class="bg-[#990000]">
+            <NIcon>
               <div class="i-fa6-brands:internet-explorer" />
             </NIcon>
           </NAvatar>

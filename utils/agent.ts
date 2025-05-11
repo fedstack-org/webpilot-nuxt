@@ -3,6 +3,7 @@ import { type } from 'arktype'
 import type { OpenAI } from 'openai'
 import type { VNodeChild } from 'vue'
 import prompt from './prompt.md?raw'
+import { noToolUsedResponse } from './responses'
 
 export type ToolMessageState =
   | 'bad-input'
@@ -90,6 +91,7 @@ export type IAgentMessage = ITextMessage | IToolMessage
 
 export interface IEnvironmentConfig {
   defaultModel?: string
+  defaultRequireTool?: boolean
 }
 
 export interface TextContent {
@@ -110,6 +112,7 @@ export type AssistantMessageContent = TextContent | ToolUse
 export interface ISystemPromptParams {
   tools: string
   website_instructions: string
+  additional_rules: string
 }
 
 export function getSystemPrompt(params: ISystemPromptParams) {
@@ -120,6 +123,7 @@ export function getSystemPrompt(params: ISystemPromptParams) {
 
 export interface INextStepOptions {
   model?: string
+  requireTool?: boolean
   toolFilter?: (tool: IAgentTool) => boolean
   instructionFilter?: (instruction: IAgentInstruction) => boolean
 }
@@ -203,6 +207,7 @@ export class Environment {
   async nextStep(taskContext: ITaskContext, options?: INextStepOptions) {
     const model = options?.model ?? this.config.defaultModel
     if (!model) throw new Error('No model provided')
+    const requireTool = options?.requireTool ?? this.config.defaultRequireTool
     for (;;) {
       const messages: OpenAI.ChatCompletionMessageParam[] = [
         { role: 'system', content: await this._getSystemPrompt(options) },
@@ -252,16 +257,18 @@ export class Environment {
       curMsg.partial = false
       const toolUse = contentBlocks.find((block) => block.type === 'tool_use')
       if (!toolUse) {
-        // taskContext.messages.push({
-        //   role: 'tool',
-        //   use: { type: 'tool_use', name: '_no_tool', params: {}, partial: false },
-        //   params: {},
-        //   state: 'bad-input',
-        //   result: '',
-        //   formattedResult: 'No tool use block found. You must use exactly one tool',
-        //   uiState: {}
-        // })
-        // continue
+        if (requireTool) {
+          taskContext.messages.push({
+            role: 'tool',
+            use: { type: 'tool_use', name: '_no_tool', params: {}, partial: false },
+            params: {},
+            state: 'bad-input',
+            result: '',
+            formattedResult: 'No tool use block found. You must use exactly one tool',
+            uiState: {}
+          })
+          continue
+        }
         break
       }
       const tool = this._tools[toolUse.name]
@@ -339,6 +346,11 @@ RULES:
       } else if (message.role === 'assistant') {
         result.push({ role: 'assistant', content: message.content })
       } else if (message.role === 'tool') {
+        if (message.use.name === '_no_tool') {
+          const content = noToolUsedResponse
+          result.push({ role: 'user', content })
+          continue
+        }
         let content = `[Result for tool ${message.use.name}]\n`
         switch (message.state) {
           case 'completed':
@@ -508,20 +520,20 @@ RULES:
   private async _getSystemPrompt(options?: INextStepOptions) {
     const params: ISystemPromptParams = {
       tools: '',
-      website_instructions: ''
+      website_instructions: '',
+      additional_rules: ''
     }
     const tools = Object.values(this._tools).filter(options?.toolFilter ?? (() => true))
     for (const tool of tools) {
       params.tools += `
 ## ${tool.name}
 
-Description: ${unref(tool.description)}
-
-Parameters:
-      `.trim()
-      params.tools += '\n'
-      for (const [name, param] of Object.entries(tool.params)) {
-        params.tools += `- ${name}: (${param.required ? 'required' : 'optional'}) ${unref(param.description)}\n`
+Description: ${unref(tool.description)}`
+      if (Object.keys(tool.params).length) {
+        params.tools += `\n\nParameters:\n`
+        for (const [name, param] of Object.entries(tool.params)) {
+          params.tools += `- ${name}: (${param.required ? 'required' : 'optional'}) ${unref(param.description)}\n`
+        }
       }
       params.tools += `\nUsage Example:\n`
       params.tools += `<${tool.name}>\n`
@@ -541,6 +553,11 @@ Parameters:
 ${unref(instruction.instruction)}
       `.trim()
       params.website_instructions += '\n\n'
+    }
+    if (options?.requireTool ?? this.config.defaultRequireTool) {
+      params.additional_rules += `
+- For EACH of your message, you MUST select one best tool to be used.
+`.trim()
     }
     return getSystemPrompt(params)
   }
