@@ -24,7 +24,7 @@
         :title="$t('webpilot.msg.tool_use_bad_input')"
         type="error"
       />
-      <NCollapse v-else :default-expanded-names="['params', 'result']">
+      <NCollapse v-else :default-expanded-names="tool?.needApproval ? ['params', 'result'] : []">
         <NCollapseItem name="params" :title="$t('webpilot.msg.tool_use_params')">
           <CommonRenderFunction
             v-if="metadata?.uiParams"
@@ -126,7 +126,8 @@ const iconClass = computed(() => {
   }
 })
 
-const metadata = computed(() => environment.tools.value[message.value.use.name]?.metadata)
+const tool = computed(() => environment.tools.value[message.value.use.name])
+const metadata = computed(() => tool.value?.metadata)
 
 const toolTitle = computed(() => {
   const toolName = metadata.value?.uiName ?? t('webpilot.term.tool')
@@ -184,12 +185,11 @@ function approve() {
   if (message.value.promise || message.value.result) return
   if (!['pending-approval', 'pending-response'].includes(message.value.state)) return
   message.value.state = 'pending-response'
-  const tool = environment.tools.value[message.value.use.name]
-  message.value.promise = tool.handler(message.value.params, message.value)
+  message.value.promise = tool.value.handler(message.value.params, message.value)
   message.value.promise
     .then((result) => {
       message.value.result = result
-      message.value.formattedResult = tool.formatter(result)
+      message.value.formattedResult = tool.value.formatter(result)
       message.value.state = 'completed'
       startStepTask.execute()
     })
@@ -210,10 +210,7 @@ onMounted(() => {
   if (['ask_followup_question', 'attempt_completion'].includes(message.value.use.name)) {
     return
   }
-  if (
-    !environment.tools.value[message.value.use.name]?.needApproval ||
-    config.tools[message.value.use.name]?.approved
-  ) {
+  if (!tool.value?.needApproval || config.tools[message.value.use.name]?.approved) {
     approve()
   }
 })

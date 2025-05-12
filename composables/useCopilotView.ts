@@ -1,6 +1,7 @@
 export interface ICopilotViewOptions {
   advanced?: boolean
   userName?: string
+  emphasizeFinalMessage?: boolean
 }
 
 export const copilotViewKey: InjectionKey<ICopilotViewOptions> = Symbol('copilotView')
