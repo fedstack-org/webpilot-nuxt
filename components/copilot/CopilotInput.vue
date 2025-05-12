@@ -87,7 +87,16 @@
         </NTag>
       </NPopselect>
     </div>
+    <NButton
+      v-if="disabled === 'user'"
+      class="w-full"
+      :loading="startStepTask.loading.value"
+      @click="startStepTask.execute()"
+    >
+      {{ $t('webpilot.msg.continue_task') }}
+    </NButton>
     <NInput
+      v-else
       v-model:value="userInput"
       type="textarea"
       :autosize="{ minRows, maxRows }"
@@ -162,6 +171,9 @@ const disabled = computed(() => {
     if (['pending-approval', 'pending-response'].includes(lastMsg.state)) {
       return 'pending-tool'
     }
+  }
+  if (lastMsg?.role === 'user') {
+    return 'user'
   }
   return ''
 })

@@ -92,6 +92,7 @@ export type IAgentMessage = ITextMessage | IToolMessage
 export interface IEnvironmentConfig {
   defaultModel?: string
   defaultRequireTool?: boolean
+  defaultMaxSteps?: number
 }
 
 export interface TextContent {
@@ -124,6 +125,7 @@ export function getSystemPrompt(params: ISystemPromptParams) {
 export interface INextStepOptions {
   model?: string
   requireTool?: boolean
+  maxSteps?: number
   toolFilter?: (tool: IAgentTool) => boolean
   instructionFilter?: (instruction: IAgentInstruction) => boolean
 }
@@ -208,7 +210,8 @@ export class Environment {
     const model = options?.model ?? this.config.defaultModel
     if (!model) throw new Error('No model provided')
     const requireTool = options?.requireTool ?? this.config.defaultRequireTool
-    for (;;) {
+    const maxSteps = options?.maxSteps ?? this.config.defaultMaxSteps ?? 50
+    for (let step = 0; step < maxSteps; step++) {
       const messages: OpenAI.ChatCompletionMessageParam[] = [
         { role: 'system', content: await this._getSystemPrompt(options) },
         ...(await this._convertToOpenAIMessages(taskContext.messages))

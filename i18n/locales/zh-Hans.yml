@@ -8,6 +8,7 @@ webpilot:
   msg:
     aigc_warn: 回答由AI生成，请仔细鉴别
     input_placeholder: 请输入消息（⏎发送 ⇧+⏎换行）
+    continue_task: 继续任务
     api_pending: 请求中
     api_success: 请求成功
     thinking: 思考中
