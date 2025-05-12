@@ -1,6 +1,6 @@
 <template>
   <div class="px-4 h-16 min-h-16 max-h-16 flex items-center space-x-2">
-    <div class="i-fa6-brands:internet-explorer text-lg inline-block mb-[-0.15rem]" />
+    <div class="i-webpilot:icon text-lg inline-block mb-[-0.15rem]" />
     <h1 class="flex-1 text-lg overflow-hidden text-nowrap text-ellipsis">
       {{ taskContext.title || $t('webpilot.name') }}
     </h1>

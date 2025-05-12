@@ -5,7 +5,7 @@
         <div class="flex items-center gap-2">
           <NAvatar size="small" class="bg-[#990000]">
             <NIcon>
-              <div class="i-fa6-brands:internet-explorer" />
+              <div class="i-webpilot:icon" />
             </NIcon>
           </NAvatar>
           <div>
