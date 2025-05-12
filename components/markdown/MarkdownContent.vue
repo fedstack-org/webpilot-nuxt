@@ -4,6 +4,9 @@
 </template>
 
 <script setup lang="ts">
+import 'github-markdown-css/github-markdown-light.css'
+import 'katex/dist/katex.min.css'
+
 const props = defineProps<{
   content: string
 }>()
@@ -18,3 +21,9 @@ watch(
   () => refresh()
 )
 </script>
+
+<style lang="css">
+.katex-block {
+  overflow: auto;
+}
+</style>

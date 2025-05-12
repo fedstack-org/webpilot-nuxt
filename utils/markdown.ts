@@ -1,7 +1,5 @@
 import { fromAsyncCodeToHtml } from '@shikijs/markdown-it/async'
 import mk from '@vscode/markdown-it-katex'
-import 'github-markdown-css/github-markdown-light.css'
-import 'katex/dist/katex.min.css'
 import MarkdownItAsync from 'markdown-it-async'
 import { codeToHtml } from 'shiki'
 
