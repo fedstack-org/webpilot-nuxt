@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type } from 'arktype'
+import { defu } from 'defu'
 import type { OpenAI } from 'openai'
 import type { VNodeChild } from 'vue'
 import prompt from './prompt.md?raw'
@@ -90,9 +91,8 @@ export interface IToolMessage {
 export type IAgentMessage = ITextMessage | IToolMessage
 
 export interface IEnvironmentConfig {
-  defaultModel?: string
-  defaultRequireTool?: boolean
-  defaultMaxSteps?: number
+  defaultNextStepOptions?: Partial<INextStepOptions>
+  defaultSummarizeOptions?: Partial<ISummarizeOptions>
 }
 
 export interface TextContent {
@@ -126,6 +126,7 @@ export interface INextStepOptions {
   model?: string
   requireTool?: boolean
   maxSteps?: number
+  temperature?: number
   toolFilter?: (tool: IAgentTool) => boolean
   instructionFilter?: (instruction: IAgentInstruction) => boolean
 }
@@ -206,11 +207,15 @@ export class Environment {
     return toRef(this._instructions, name) as Ref<IAgentInstruction>
   }
 
-  async nextStep(taskContext: ITaskContext, options?: INextStepOptions) {
-    const model = options?.model ?? this.config.defaultModel
+  async nextStep(taskContext: ITaskContext, _options?: INextStepOptions) {
+    const options = defu(_options, this.config.defaultNextStepOptions, {
+      maxSteps: 50,
+      temperature: 0
+    })
+    const model = options.model
     if (!model) throw new Error('No model provided')
-    const requireTool = options?.requireTool ?? this.config.defaultRequireTool
-    const maxSteps = options?.maxSteps ?? this.config.defaultMaxSteps ?? 50
+    const requireTool = options.requireTool
+    const maxSteps = options.maxSteps
     for (let step = 0; step < maxSteps; step++) {
       const messages: OpenAI.ChatCompletionMessageParam[] = [
         { role: 'system', content: await this._getSystemPrompt(options) },
@@ -223,7 +228,8 @@ export class Environment {
       const stream = this.llm.beta.chat.completions.stream({
         model,
         messages,
-        stream: true
+        stream: true,
+        temperature: options.temperature
       })
       taskContext.messages.push({
         role: 'assistant',
@@ -298,8 +304,9 @@ export class Environment {
     }
   }
 
-  async summarize(taskContext: ITaskContext, options?: ISummarizeOptions) {
-    const model = options?.model ?? this.config.defaultModel
+  async summarize(taskContext: ITaskContext, _options?: ISummarizeOptions) {
+    const options = defu(_options, this.config.defaultSummarizeOptions)
+    const model = options.model
     if (!model) throw new Error('No model provided')
     const messages: OpenAI.ChatCompletionMessageParam[] = [
       {
@@ -520,7 +527,7 @@ RULES:
     return contentBlocks
   }
 
-  private async _getSystemPrompt(options?: INextStepOptions) {
+  private async _getSystemPrompt(options: INextStepOptions) {
     const params: ISystemPromptParams = {
       tools: '',
       website_instructions: '',
@@ -557,7 +564,7 @@ ${unref(instruction.instruction)}
       `.trim()
       params.website_instructions += '\n\n'
     }
-    if (options?.requireTool ?? this.config.defaultRequireTool) {
+    if (options.requireTool) {
       params.additional_rules += `
 - For EACH of your message, you MUST select one best tool to be used.
 `.trim()
