@@ -5,9 +5,9 @@
   >
     <CopilotHeader />
     <NScrollbar ref="scrollbar" class="flex-1" content-class="overflow-hidden" @scroll="onScroll">
-      <CopilotMessages :user-name />
+      <CopilotMessages />
     </NScrollbar>
-    <CopilotInput :advanced />
+    <CopilotInput />
     <CopilotFooter />
   </div>
   <div v-else-if="tasks.data.value.length && showTasks">
@@ -49,10 +49,10 @@
       </template>
       <div class="text-lg text-center font-medium pb-2">
         <slot name="welcome">
-          {{ welcome ?? $t('webpilot.msg.welcome') }}
+          {{ $t('webpilot.msg.welcome') }}
         </slot>
       </div>
-      <CopilotInput :advanced :min-rows="4" :max-rows="8" />
+      <CopilotInput :min-rows="4" :max-rows="8" />
       <div v-if="tasks.data.value.length" class="flex justify-center space-x-2 mt-2">
         <NButton type="primary" :disabled="!userInput" @click="handleUserInput(userInput)">
           {{ $t('webpilot.msg.start_task') }}
@@ -67,14 +67,12 @@
 </template>
 
 <script setup lang="ts">
+import type { ICopilotViewOptions } from '#imports'
 import { NButton, NCard, NIcon, NPopconfirm, NScrollbar } from 'naive-ui'
 
-defineProps<{
-  welcome?: string
-  advanced?: boolean
-  userName?: string
-}>()
+const props = defineProps<ICopilotViewOptions>()
 
+provideCopilotView(props)
 const scrollbar = useTemplateRef('scrollbar')
 const { taskContext, clearTasks, tasks, userInput, handleUserInput } = useCopilot()
 const showTasks = ref(false)

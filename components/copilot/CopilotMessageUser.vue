@@ -4,7 +4,7 @@
       <template #header>
         <div class="flex items-center gap-2">
           <NAvatar size="small" class="bg-blue">
-            {{ (userName ?? $t('webpilot.term.user')).slice(-2) }}
+            {{ (options.userName ?? $t('webpilot.term.user')).slice(-2) }}
           </NAvatar>
         </div>
       </template>
@@ -18,6 +18,7 @@ import { NAvatar, NCard } from 'naive-ui'
 
 defineProps<{
   message: ITextMessage
-  userName?: string
 }>()
+
+const options = useCopilotView()
 </script>

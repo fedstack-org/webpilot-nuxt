@@ -1,6 +1,6 @@
 <template>
   <NCard size="small">
-    <div v-if="advanced" class="flex gap-2 items-center mb-2">
+    <div v-if="options.advanced" class="flex gap-2 items-center mb-2">
       <NPopover trigger="click">
         <template #trigger>
           <NTag type="info" size="small" class="cursor-pointer">
@@ -125,15 +125,12 @@ import {
   NTag
 } from 'naive-ui'
 
-const {
-  minRows = 1,
-  maxRows = 4,
-  advanced = true
-} = defineProps<{
+const { minRows = 1, maxRows = 4 } = defineProps<{
   minRows?: number
   maxRows?: number
-  advanced?: boolean
 }>()
+
+const options = useCopilotView()
 
 const {
   handleUserInput,

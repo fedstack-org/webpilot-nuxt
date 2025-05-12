@@ -1,7 +1,11 @@
 <template>
   <div v-if="taskContext.messages.length" class="py-2 space-y-1">
-    <div v-for="(msg, i) of taskContext.messages" :key="i">
-      <CopilotMessageUser v-if="msg.role === 'user'" :message="msg" :user-name />
+    <div
+      v-for="(msg, i) of taskContext.messages"
+      :key="i"
+      class="opacity-50 hover:opacity-100 last:opacity-100 transition-200"
+    >
+      <CopilotMessageUser v-if="msg.role === 'user'" :message="msg" />
       <CopilotMessageAssistant v-else-if="msg.role === 'assistant'" :message="msg" />
       <CopilotMessageTool
         v-else-if="msg.role === 'tool' && msg.use.name !== '_no_tool'"
@@ -13,9 +17,5 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  userName?: string
-}>()
-
 const { taskContext } = useCopilot()
 </script>
