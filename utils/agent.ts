@@ -88,7 +88,12 @@ export interface IToolMessage {
   feedback?: string
 }
 
-export type IAgentMessage = ITextMessage | IToolMessage
+export interface IEventMessage {
+  role: 'event'
+  type: 'max_steps_reached' | 'max_retries_reached' | 'api_error'
+}
+
+export type IAgentMessage = ITextMessage | IToolMessage | IEventMessage
 
 export interface IEnvironmentConfig {
   defaultNextStepOptions?: Partial<INextStepOptions>
@@ -125,6 +130,7 @@ export function getSystemPrompt(params: ISystemPromptParams) {
 export interface INextStepOptions {
   model?: string
   requireTool?: boolean
+  maxRetries?: number
   maxSteps?: number
   temperature?: number
   toolFilter?: (tool: IAgentTool) => boolean
@@ -209,48 +215,70 @@ export class Environment {
 
   async nextStep(taskContext: ITaskContext, _options?: INextStepOptions) {
     const options = defu(_options, this.config.defaultNextStepOptions, {
-      maxSteps: 50,
+      maxRetries: 5,
+      maxSteps: 5,
       temperature: 0
     })
-    const model = options.model
-    if (!model) throw new Error('No model provided')
-    const requireTool = options.requireTool
-    const maxSteps = options.maxSteps
-    for (let step = 0; step < maxSteps; step++) {
+    if ((taskContext.consecutiveSteps ?? 0) >= options.maxSteps) {
+      taskContext.messages.push({
+        role: 'event',
+        type: 'max_steps_reached'
+      })
+      return
+    }
+    taskContext.consecutiveSteps = (taskContext.consecutiveSteps ?? 0) + 1
+    if (!options.model) throw new Error('No model provided')
+    for (let retry = 0; ; retry++) {
+      if (retry >= options.maxRetries) {
+        taskContext.messages.push({
+          role: 'event',
+          type: 'max_retries_reached'
+        })
+        return
+      }
       const messages: OpenAI.ChatCompletionMessageParam[] = [
         { role: 'system', content: await this._getSystemPrompt(options) },
         ...(await this._convertToOpenAIMessages(taskContext.messages))
       ]
-      console.group('Step Info')
+      console.group('Step Info', taskContext.consecutiveSteps, `${retry}/${options.maxRetries}`)
       console.log('messages', messages)
       console.groupEnd()
 
-      const stream = this.llm.beta.chat.completions.stream({
-        model,
-        messages,
-        stream: true,
-        temperature: options.temperature
-      })
       taskContext.messages.push({
         role: 'assistant',
         content: '',
         partial: true
       })
       const curMsg = taskContext.messages[taskContext.messages.length - 1] as ITextMessage
-
-      for await (const chunk of stream) {
-        const delta = chunk.choices[0]?.delta
-        if (!delta) continue
-        if (delta.content) {
-          curMsg.content += delta.content
+      let finalContent: string
+      try {
+        const stream = this.llm.beta.chat.completions.stream({
+          messages,
+          model: options.model,
+          temperature: options.temperature,
+          stream: true
+        })
+        for await (const chunk of stream) {
+          const delta = chunk.choices[0]?.delta
+          if (!delta) continue
+          if (delta.content) {
+            curMsg.content += delta.content
+          }
+          if ('reasoning_content' in delta) {
+            curMsg.thought ??= ''
+            curMsg.thought += delta.reasoning_content
+          }
         }
-        if ('reasoning_content' in delta) {
-          curMsg.thought ??= ''
-          curMsg.thought += delta.reasoning_content
-        }
+        const chatCompletion = await stream.finalChatCompletion()
+        finalContent = chatCompletion.choices[0].message.content ?? ''
+      } catch {
+        taskContext.messages.pop()
+        taskContext.messages.push({
+          role: 'event',
+          type: 'api_error'
+        })
+        return
       }
-      const chatCompletion = await stream.finalChatCompletion()
-      const finalContent = chatCompletion.choices[0].message.content ?? ''
       const contentBlocks = await this._parseAssistantMessage(finalContent)
       const textContent = contentBlocks
         .filter((block) => block.type === 'text')
@@ -266,7 +294,7 @@ export class Environment {
       curMsg.partial = false
       const toolUse = contentBlocks.find((block) => block.type === 'tool_use')
       if (!toolUse) {
-        if (requireTool) {
+        if (options.requireTool) {
           taskContext.messages.push({
             role: 'tool',
             use: { type: 'tool_use', name: '_no_tool', params: {}, partial: false },
@@ -644,4 +672,5 @@ IMPORTANT NOTE: This tool CANNOT be used until you've confirmed from the user th
 
 export interface ITaskContext {
   messages: IAgentMessage[]
+  consecutiveSteps?: number
 }

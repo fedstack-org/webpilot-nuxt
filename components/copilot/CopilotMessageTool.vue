@@ -72,10 +72,10 @@
           }"
         />
         <div v-else class="flex gap-2">
-          <NButton :disabled size="small" secondary type="success" class="flex-1" @click="approve">
+          <NButton :disabled size="small" type="success" class="flex-1" @click="approve()">
             {{ $t('webpilot.action.approve') }}
           </NButton>
-          <NButton :disabled size="small" secondary type="error" class="flex-1" @click="reject">
+          <NButton :disabled size="small" secondary type="error" class="flex-1" @click="reject()">
             {{ $t('webpilot.action.reject') }}
           </NButton>
         </div>
@@ -181,7 +181,7 @@ function displayCode(code: string, lang: string = 'plain') {
   return '```' + lang + '\n' + code + '\n```'
 }
 
-function approve() {
+function approve(auto = false) {
   if (message.value.promise || message.value.result) return
   if (!['pending-approval', 'pending-response'].includes(message.value.state)) return
   message.value.state = 'pending-response'
@@ -191,19 +191,19 @@ function approve() {
       message.value.result = result
       message.value.formattedResult = tool.value.formatter(result)
       message.value.state = 'completed'
-      startStepTask.execute()
+      startStepTask.execute(!auto)
     })
     .catch((err) => {
       message.value.result = err
       message.value.formattedResult = `${err}`
       message.value.state = 'failed'
-      startStepTask.execute()
+      startStepTask.execute(!auto)
     })
 }
 
 function reject() {
   message.value.state = 'rejected'
-  startStepTask.execute()
+  startStepTask.execute(true)
 }
 
 onMounted(() => {
@@ -211,7 +211,7 @@ onMounted(() => {
     return
   }
   if (!tool.value?.needApproval || config.tools[message.value.use.name]?.approved) {
-    approve()
+    approve(true)
   }
 })
 </script>

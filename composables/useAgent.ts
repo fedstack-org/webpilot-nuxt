@@ -115,7 +115,10 @@ const _useAgent = ({
   })
   const taskContext = ref<IAgentTaskContext>(createEmptyTask())
   const startStepTask = useTask(
-    async () => {
+    async (resetConsecutiveSteps?: boolean) => {
+      if (resetConsecutiveSteps) {
+        taskContext.value.consecutiveSteps = 0
+      }
       await environment.nextStep(taskContext.value, {
         toolFilter: (tool) => !config.tools[tool.name]?.disabled && toolFilter(tool),
         instructionFilter: (instruction) =>
@@ -131,7 +134,7 @@ const _useAgent = ({
       role: 'user',
       content
     })
-    startStepTask.execute()
+    startStepTask.execute(true)
   }
   const newTask = useTask(
     async () => {

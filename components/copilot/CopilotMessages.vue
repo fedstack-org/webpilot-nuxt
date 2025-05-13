@@ -7,6 +7,7 @@
     <div v-for="(msg, i) of messages" :key="i" class="wp-msg" :class="[`wp-msg-${msg.role}`]">
       <CopilotMessageUser v-if="msg.role === 'user'" :message="msg" />
       <CopilotMessageAssistant v-else-if="msg.role === 'assistant'" :message="msg" />
+      <CopilotMessageEvent v-else-if="msg.role === 'event'" :message="msg" />
       <CopilotMessageTool
         v-else-if="msg.role === 'tool' && msg.use.name !== '_no_tool'"
         :message="msg"

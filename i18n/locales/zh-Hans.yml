@@ -15,7 +15,7 @@ webpilot:
     thought: 思考内容
     direct_tool_use: 我将直接使用工具来完成任务
     tool_use_title: '@:webpilot.name {toolTitle}'
-    tool_use_bad_input: AI遇到了问题，重试中
+    tool_use_bad_input: '@:webpilot.name 遇到了问题，重试中'
     tool_use_params: 工具调用详情
     tool_use_result: 工具调用结果
     tool_use_title__ask_followup_question: 想问您一个问题
@@ -39,6 +39,9 @@ webpilot:
     delete_task_confirm: 您确定要删除此任务吗？
     edit_task_title: 编辑任务标题
     summarize_task_confirm: 是否重新生成任务标题？
+    event_title__max_steps_reached: 已达连续步骤限制
+    event_title__max_retries_reached: '@:webpilot.name 遇到了问题'
+    event_title__api_error: 网络故障
   action:
     approve: 允许
     reject: 拒绝

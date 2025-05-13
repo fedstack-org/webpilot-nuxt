@@ -83,15 +83,17 @@
               <div class="i-carbon:machine-learning-model" />
             </NIcon>
           </template>
-          {{ currentModel || $t('webpilot.msg.no_model') }}
+          <NEllipsis class="max-w-24! overflow-hidden" :tooltip="false">
+            {{ currentModel || $t('webpilot.msg.no_model') }}
+          </NEllipsis>
         </NTag>
       </NPopselect>
     </div>
     <NButton
-      v-if="disabled === 'user'"
+      v-if="disabled === 'paused'"
       class="w-full"
       :loading="startStepTask.loading.value"
-      @click="startStepTask.execute()"
+      @click="startStepTask.execute(true)"
     >
       {{ $t('webpilot.msg.continue_task') }}
     </NButton>
@@ -126,6 +128,7 @@ import {
   NButton,
   NCard,
   NCheckbox,
+  NEllipsis,
   NIcon,
   NInput,
   NPopover,
@@ -166,14 +169,15 @@ const disabled = computed(() => {
   if (startStepTask.loading.value) {
     return 'loading'
   }
-  const lastMsg = taskContext.value.messages.at(-1)
+  const lastMsg = taskContext.value.messages.findLast((msg) => msg.role !== 'event')
   if (lastMsg?.role === 'tool') {
     if (['pending-approval', 'pending-response'].includes(lastMsg.state)) {
       return 'pending-tool'
     }
+    return 'paused'
   }
   if (lastMsg?.role === 'user') {
-    return 'user'
+    return 'paused'
   }
   return ''
 })

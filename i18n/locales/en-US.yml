@@ -15,7 +15,7 @@ webpilot:
     thought: Thought
     direct_tool_use: I will use a tool directly to complete the task
     tool_use_title: '@:webpilot.name {toolTitle}'
-    tool_use_bad_input: AI encountered a problem, retrying
+    tool_use_bad_input: '@:webpilot.name encountered a problem, retrying'
     tool_use_params: Tool Call Details
     tool_use_result: Tool Call Result
     tool_use_title__ask_followup_question: I have a question for you
@@ -39,6 +39,9 @@ webpilot:
     delete_task_confirm: Are you sure you want to delete this task?
     edit_task_title: Edit Task Title
     summarize_task_confirm: Do you want to regenerate the task title?
+    event_title__max_steps_reached: Consecutive step limit reached
+    event_title__max_retries_reached: '@:webpilot.name encountered a problem'
+    event_title__api_error: Network error
   action:
     approve: Approve
     reject: Reject

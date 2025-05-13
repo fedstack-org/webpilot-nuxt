@@ -46,6 +46,6 @@ const handleAnswer = (answer: string) => {
   message.value.result = answer
   message.value.formattedResult = answer
   message.value.state = 'completed'
-  startStepTask.execute()
+  startStepTask.execute(true)
 }
 </script>
