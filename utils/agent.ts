@@ -3,7 +3,6 @@ import { type } from 'arktype'
 import { defu } from 'defu'
 import type { OpenAI } from 'openai'
 import type { VNodeChild } from 'vue'
-import prompt from './prompt.md?raw'
 import { noToolUsedResponse } from './responses'
 
 export type ToolMessageState =
@@ -121,10 +120,11 @@ export interface ISystemPromptParams {
   additional_rules: string
 }
 
-export function getSystemPrompt(params: ISystemPromptParams) {
-  return prompt
-    .replace(/{{tools}}/g, params.tools)
-    .replace(/{{website_instructions}}/g, params.website_instructions)
+export function getSystemPrompt(template: string, params: ISystemPromptParams) {
+  return Object.entries(params).reduce(
+    (acc, [key, value]) => acc.replace(new RegExp(`{{${key}}}`, 'g'), value),
+    template
+  )
 }
 
 export interface INextStepOptions {
@@ -133,6 +133,7 @@ export interface INextStepOptions {
   maxRetries?: number
   maxSteps?: number
   temperature?: number
+  systemPromptTemplate?: string | (() => string) | (() => Promise<string>)
   toolFilter?: (tool: IAgentTool) => boolean
   instructionFilter?: (instruction: IAgentInstruction) => boolean
 }
@@ -556,6 +557,11 @@ RULES:
   }
 
   private async _getSystemPrompt(options: INextStepOptions) {
+    const templateFn =
+      options.systemPromptTemplate ??
+      (() => import('./prompt.md?raw').then(({ default: prompt }) => prompt))
+    const template = typeof templateFn === 'string' ? templateFn : await templateFn()
+
     const params: ISystemPromptParams = {
       tools: '',
       website_instructions: '',
@@ -597,7 +603,7 @@ ${unref(instruction.instruction)}
 - For EACH of your message, you MUST select one best tool to be used.
 `.trim()
     }
-    return getSystemPrompt(params)
+    return getSystemPrompt(template, params)
   }
 
   private async _addBuiltinTools() {
