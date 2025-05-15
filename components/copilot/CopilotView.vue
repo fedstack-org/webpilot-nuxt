@@ -67,12 +67,13 @@
 </template>
 
 <script setup lang="ts">
-import type { ICopilotViewOptions } from '#imports'
 import { NButton, NCard, NIcon, NPopconfirm, NScrollbar } from 'naive-ui'
 
-const props = defineProps<ICopilotViewOptions>()
+const { options = {} } = defineProps<{
+  options?: ICopilotViewOptions
+}>()
 
-provideCopilotView(props)
+provideCopilotView(options)
 const scrollbar = useTemplateRef('scrollbar')
 const { taskContext, clearTasks, tasks, userInput, handleUserInput } = useCopilot()
 const showTasks = ref(false)

@@ -30,7 +30,7 @@
             </NLayoutContent>
           </NLayout>
           <NLayoutSider :native-scrollbar="false" bordered :width="320" content-class="h-full">
-            <CopilotPanel advanced />
+            <CopilotPanel />
           </NLayoutSider>
         </NLayout>
       </NDialogProvider>
