@@ -83,9 +83,7 @@
               <div class="i-carbon:machine-learning-model" />
             </NIcon>
           </template>
-          <NEllipsis class="max-w-24! overflow-hidden" :tooltip="false">
-            {{ currentModel || $t('webpilot.msg.no_model') }}
-          </NEllipsis>
+          {{ modelName }}
         </NTag>
       </NPopselect>
     </div>
@@ -128,7 +126,6 @@ import {
   NButton,
   NCard,
   NCheckbox,
-  NEllipsis,
   NIcon,
   NInput,
   NPopover,
@@ -142,6 +139,7 @@ const { minRows = 1, maxRows = 4 } = defineProps<{
   maxRows?: number
 }>()
 
+const { t } = useI18n()
 const options = useCopilotView()
 
 const {
@@ -157,6 +155,14 @@ const {
   models,
   userInput
 } = useCopilot()
+
+const modelName = computed(() => {
+  const name = currentModel.value || t('webpilot.msg.no_model')
+  if (name.length > 12) {
+    return `${name.slice(0, 12)}...`
+  }
+  return name
+})
 
 const modelOptions = computed<SelectOption[]>(() =>
   models.data.value.map((model) => ({
