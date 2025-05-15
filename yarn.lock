@@ -950,7 +950,8 @@ __metadata:
     "@nuxt/eslint": "npm:^1.3.1"
     "@nuxtjs/i18n": "npm:^9.5.4"
     "@shikijs/markdown-it": "npm:^3.4.0"
-    "@uaaa/nuxt": "npm:^1.5.0"
+    "@types/debug": "npm:^4"
+    "@uaaa/nuxt": "npm:^1.6.1"
     "@unocss/nuxt": "npm:^66.1.1"
     "@unocss/preset-icons": "npm:^66.1.1"
     "@unocss/reset": "npm:^66.1.1"
@@ -960,6 +961,7 @@ __metadata:
     "@vueuse/nuxt": "npm:^13.1.0"
     "@vueuse/router": "npm:^13.1.0"
     arktype: "npm:^2.1.20"
+    debug: "npm:^4.4.1"
     defu: "npm:^6.1.4"
     eslint: "npm:^9.26.0"
     github-markdown-css: "npm:^5.8.1"
@@ -2765,6 +2767,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/debug@npm:^4":
+  version: 4.1.12
+  resolution: "@types/debug@npm:4.1.12"
+  dependencies:
+    "@types/ms": "npm:*"
+  checksum: 10/47876a852de8240bfdaf7481357af2b88cb660d30c72e73789abf00c499d6bc7cd5e52f41c915d1b9cd8ec9fef5b05688d7b7aef17f7f272c2d04679508d1053
+  languageName: node
+  linkType: hard
+
 "@types/estree@npm:*, @types/estree@npm:1.0.7, @types/estree@npm:^1.0.0, @types/estree@npm:^1.0.6":
   version: 1.0.7
   resolution: "@types/estree@npm:1.0.7"
@@ -2841,6 +2852,13 @@ __metadata:
   version: 2.0.0
   resolution: "@types/mdurl@npm:2.0.0"
   checksum: 10/78746e96c655ceed63db06382da466fd52c7e9dc54d60b12973dfdd110cae06b9439c4b90e17bb8d4461109184b3ea9f3e9f96b3e4bf4aa9fe18b6ac35f283c8
+  languageName: node
+  linkType: hard
+
+"@types/ms@npm:*":
+  version: 2.1.0
+  resolution: "@types/ms@npm:2.1.0"
+  checksum: 10/532d2ebb91937ccc4a89389715e5b47d4c66e708d15942fe6cc25add6dc37b2be058230a327dd50f43f89b8b6d5d52b74685a9e8f70516edfc9bdd6be910eff4
   languageName: node
   linkType: hard
 
@@ -3070,14 +3088,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uaaa/nuxt@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "@uaaa/nuxt@npm:1.5.0"
+"@uaaa/nuxt@npm:^1.6.1":
+  version: 1.6.1
+  resolution: "@uaaa/nuxt@npm:1.6.1"
   dependencies:
     "@nuxt/kit": "npm:^3.16.2"
     "@vueuse/core": "npm:^13.1.0"
+    debug: "npm:^4.4.1"
     defu: "npm:^6.1.4"
-  checksum: 10/314c9a822e322cb29443014277d6b2a3b7870f8c4e634d8a35dd675518ec758e285f1fd04add3e394a92ae4aff8fd0ff25e5a7cef1c95e0737da8ada16bc182e
+  checksum: 10/14bea0f38e1bf9ac498c4f3ddac00354b583366c4bd88788ca3bd05807aadabf981deec8fd579f602b51261b4c147ba0d26585f2f8c9318fa53aa02a5e2cce55
   languageName: node
   linkType: hard
 
@@ -5325,6 +5344,18 @@ __metadata:
   dependencies:
     ms: "npm:^2.1.1"
   checksum: 10/d86fd7be2b85462297ea16f1934dc219335e802f629ca9a69b63ed8ed041dda492389bb2ee039217c02e5b54792b1c51aa96ae954cf28634d363a2360c7a1639
+  languageName: node
+  linkType: hard
+
+"debug@npm:^4.4.1":
+  version: 4.4.1
+  resolution: "debug@npm:4.4.1"
+  dependencies:
+    ms: "npm:^2.1.3"
+  peerDependenciesMeta:
+    supports-color:
+      optional: true
+  checksum: 10/8e2709b2144f03c7950f8804d01ccb3786373df01e406a0f66928e47001cf2d336cbed9ee137261d4f90d68d8679468c755e3548ed83ddacdc82b194d2468afe
   languageName: node
   linkType: hard
 

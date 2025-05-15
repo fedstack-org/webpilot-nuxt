@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type } from 'arktype'
+import debug from 'debug'
 import { defu } from 'defu'
 import type { OpenAI } from 'openai'
 import type { VNodeChild } from 'vue'
 import { noToolUsedResponse } from './responses'
+
+const logger = debug('webpilot:agent')
 
 export type ToolMessageState =
   | 'bad-input'
@@ -215,6 +218,7 @@ export class Environment {
   }
 
   async nextStep(taskContext: ITaskContext, _options?: INextStepOptions) {
+    const log = logger.extend(`nextStep:${Math.random().toString(36).slice(2)}`)
     const options = defu(_options, this.config.defaultNextStepOptions, {
       maxRetries: 5,
       maxSteps: 5,
@@ -241,9 +245,8 @@ export class Environment {
         { role: 'system', content: await this._getSystemPrompt(options) },
         ...(await this._convertToOpenAIMessages(taskContext.messages))
       ]
-      console.group('Step Info', taskContext.consecutiveSteps, `${retry}/${options.maxRetries}`)
-      console.log('messages', messages)
-      console.groupEnd()
+      log('Step Info', taskContext.consecutiveSteps, `${retry}/${options.maxRetries}`)
+      log('messages', messages)
 
       taskContext.messages.push({
         role: 'assistant',
@@ -286,10 +289,8 @@ export class Environment {
         .map((block) => block.content)
         .join('\n')
 
-      console.group('Step Result')
-      console.log('textContent', textContent)
-      console.log('contentBlocks', contentBlocks)
-      console.groupEnd()
+      log('textContent', textContent)
+      log('contentBlocks', contentBlocks)
 
       curMsg.content = textContent
       curMsg.partial = false
@@ -334,6 +335,7 @@ export class Environment {
   }
 
   async summarize(taskContext: ITaskContext, _options?: ISummarizeOptions) {
+    const log = logger.extend(`summarize:${Math.random().toString(36).slice(2)}`)
     const options = defu(_options, this.config.defaultSummarizeOptions)
     const model = options.model
     if (!model) throw new Error('No model provided')
@@ -358,9 +360,8 @@ RULES:
         content: ''
       })
     }
-    console.group('Summarize Info')
-    console.log('messages', messages)
-    console.groupEnd()
+    log('Summarize Info')
+    log('messages', messages)
     const completion = await this.llm.chat.completions.create({
       model,
       messages,
@@ -368,9 +369,8 @@ RULES:
       temperature: 0
     })
     const summary = completion.choices[0].message.content ?? ''
-    console.group('Summarize Result')
-    console.log('summary', summary)
-    console.groupEnd()
+    log('Summarize Result')
+    log('summary', summary)
     return summary
   }
 

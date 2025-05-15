@@ -1,3 +1,5 @@
+import defu from 'defu'
+
 export interface IAgentToolConfig {
   disabled?: boolean
   approved?: boolean
@@ -57,6 +59,7 @@ export interface IUseAgentOptions {
   instructionFilter?: (instruction: IAgentInstruction) => boolean
   storage?: IAgentTaskStorageProvider
   storageKey?: MaybeRef<string>
+  defaultNextStepOptions?: Partial<INextStepOptions>
 }
 
 const _useAgent = ({
@@ -65,7 +68,8 @@ const _useAgent = ({
   toolFilter = () => true,
   instructionFilter = () => true,
   storage = new AgentTaskStorageProviderDefault(),
-  storageKey = 'agent_tasks'
+  storageKey = 'agent_tasks',
+  defaultNextStepOptions = {}
 }: IUseAgentOptions = {}) => {
   const { openai, environment, currentModel, models } = useEnvironment(
     createEnvironmentRoot,
@@ -119,12 +123,16 @@ const _useAgent = ({
       if (resetConsecutiveSteps) {
         taskContext.value.consecutiveSteps = 0
       }
-      await environment.nextStep(taskContext.value, {
-        toolFilter: (tool) => !config.tools[tool.name]?.disabled && toolFilter(tool),
-        instructionFilter: (instruction) =>
-          !config.instructions[instruction.name]?.disabled && instructionFilter(instruction),
-        model: currentModel.value
-      })
+      const options = defu(
+        {
+          toolFilter: (tool) => !config.tools[tool.name]?.disabled && toolFilter(tool),
+          instructionFilter: (instruction) =>
+            !config.instructions[instruction.name]?.disabled && instructionFilter(instruction),
+          model: currentModel.value
+        } satisfies INextStepOptions,
+        defaultNextStepOptions
+      )
+      await environment.nextStep(taskContext.value, options)
       saveTask.execute()
     },
     { toast: false }
