@@ -1,7 +1,7 @@
 <template>
   <NCard size="small">
     <div v-if="!options.hideInputToolbar" class="flex gap-2 items-center mb-2">
-      <NPopover trigger="click">
+      <NPopover v-if="!options.hideInputToolbarTools" trigger="click">
         <template #trigger>
           <NTag type="info" size="small" class="cursor-pointer">
             <template #icon>
@@ -44,7 +44,7 @@
           </div>
         </div>
       </NPopover>
-      <NPopover trigger="click">
+      <NPopover v-if="!options.hideInputToolbarInstructions" trigger="click">
         <template #trigger>
           <NTag type="info" size="small" class="cursor-pointer">
             <template #icon>

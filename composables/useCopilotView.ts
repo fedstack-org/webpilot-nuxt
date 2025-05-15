@@ -1,6 +1,8 @@
 export interface ICopilotViewOptions {
   userName?: string
   hideInputToolbar?: boolean
+  hideInputToolbarTools?: boolean
+  hideInputToolbarInstructions?: boolean
   emphasizeFinalMessage?: boolean
 }
 
