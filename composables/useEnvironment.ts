@@ -6,13 +6,15 @@ export interface IUseEnvironmentOptions {
   storageKey?: string
   initialModel?: string
   modelFilter?: (model: OpenAI.Models.Model) => boolean
+  additionalModels?: OpenAI.Models.Model[]
 }
 
 const _useEnvironment = ({
   config,
   storageKey,
   initialModel = '',
-  modelFilter = () => true
+  modelFilter = () => true,
+  additionalModels = []
 }: IUseEnvironmentOptions = {}) => {
   const { $auth } = useNuxtApp()
   const openai = new OpenAI({
@@ -36,7 +38,7 @@ const _useEnvironment = ({
     computed(() => `model-list-${environmentId}`),
     async () => {
       const { data } = await openai.models.list()
-      const filtered = data.filter(modelFilter)
+      const filtered = [...data, ...additionalModels].filter(modelFilter)
       if (!filtered.some((model) => model.id === currentModel.value)) {
         currentModel.value = ''
       }
