@@ -340,9 +340,10 @@ export class Environment {
     const log = logger.extend(`summarize:${Math.random().toString(36).slice(2)}`)
     const options = defu(_options, this.config.defaultSummarizeOptions, {
       temperature: 0,
-      maxCompletionTokens: 24
+      maxCompletionTokens: 12
     })
     if (!options.model) throw new Error('No model provided')
+    const conversation = await this._convertToOpenAIMessages(taskContext.messages, 'summary')
     const messages: OpenAI.ChatCompletionMessageParam[] = [
       {
         role: 'system',
@@ -351,12 +352,18 @@ You are a helpful assistant that summarizes the conversation between the user an
 Your task is to summarize the conversation in a concise and clear manner, highlighting the key points and any important information.
 
 RULES:
-- The summary should be in a single paragraph WITHOUT any line breaks or formatting.
+- The summary should be in a single phrase with only a few (3-10) words.
 - The summary should be concise and should not include any unnecessary details.
 - The summary will be used as the title of the conversation, so it should be a short, catchy phrase that captures the essence of the conversation.
         `.trim()
       },
-      ...(await this._convertToOpenAIMessages(taskContext.messages, 'summary'))
+      {
+        role: 'user',
+        content: `
+Here are the conversation:
+${conversation.map((item) => JSON.stringify(item)).join('\n')}
+        `.trim()
+      }
     ]
     if (messages.at(-1)?.role !== 'user') {
       messages.push({

@@ -10,7 +10,10 @@
     <CopilotInput />
     <CopilotFooter />
   </div>
-  <div v-else-if="tasks.data.value.length && showTasks">
+  <div
+    v-else-if="tasks.data.value.length && showTasks"
+    class="w-0 min-w-full h-full flex flex-col items-stretch"
+  >
     <NScrollbar
       class="w-0 min-w-full flex-1"
       content-class="overflow-hidden flex flex-col gap-2 p-4 items-center"
