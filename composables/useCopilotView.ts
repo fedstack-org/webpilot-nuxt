@@ -4,6 +4,7 @@ export interface ICopilotViewOptions {
   hideInputToolbarTools?: boolean
   hideInputToolbarInstructions?: boolean
   emphasizeFinalMessage?: boolean
+  showSendButton?: boolean
 }
 
 export const copilotViewKey: InjectionKey<ICopilotViewOptions> = Symbol('copilotView')

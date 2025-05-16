@@ -95,15 +95,28 @@
     >
       {{ $t('webpilot.msg.continue_task') }}
     </NButton>
-    <NInput
-      v-else
-      v-model:value="userInput"
-      type="textarea"
-      :autosize="{ minRows, maxRows }"
-      :placeholder="$t('webpilot.msg.input_placeholder')"
-      :disabled="!!disabled"
-      @keydown="handleKeydown"
-    />
+    <div v-else class="flex items-center space-x-2">
+      <NInput
+        v-model:value="userInput"
+        type="textarea"
+        :autosize="{ minRows, maxRows }"
+        :placeholder="$t('webpilot.msg.input_placeholder')"
+        :disabled="!!disabled"
+        @keydown="handleKeydown"
+      />
+      <NButton
+        v-if="options.showSendButton"
+        :disabled="!userInput || !!disabled"
+        type="primary"
+        @click="handleUserInput(userInput)"
+      >
+        <template #icon>
+          <NIcon>
+            <div class="i-carbon:send" />
+          </NIcon>
+        </template>
+      </NButton>
+    </div>
     <div
       v-if="!taskContext.messages.length && quickActions.length"
       class="mt-2 flex flex-col items-stretch"
