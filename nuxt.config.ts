@@ -36,6 +36,9 @@ export default defineNuxtConfig({
   vite: {
     build: {
       target: 'ES2022'
+    },
+    optimizeDeps: {
+      include: ['debug']
     }
   },
   i18n: {
