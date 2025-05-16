@@ -1,9 +1,10 @@
 import { fromAsyncCodeToHtml } from '@shikijs/markdown-it/async'
 import mk from '@vscode/markdown-it-katex'
+import DOMPurify from 'dompurify'
 import MarkdownItAsync from 'markdown-it-async'
 import { codeToHtml } from 'shiki'
 
-const md = MarkdownItAsync()
+const md = MarkdownItAsync({ html: true })
 md.use(
   fromAsyncCodeToHtml(codeToHtml as never, {
     themes: {
@@ -15,7 +16,8 @@ md.use(
 md.use(mk)
 
 export async function renderMarkdown(source: string) {
-  return md.renderAsync(source)
+  const html = await md.renderAsync(source)
+  return DOMPurify.sanitize(html)
 }
 
 export async function renderMarkdownText(source: string) {
