@@ -60,6 +60,7 @@ export interface IUseAgentOptions {
   storage?: IAgentTaskStorageProvider
   storageKey?: MaybeRef<string>
   defaultNextStepOptions?: Partial<INextStepOptions>
+  defaultSummarizeOptions?: Partial<ISummarizeOptions>
 }
 
 const _useAgent = ({
@@ -69,7 +70,8 @@ const _useAgent = ({
   instructionFilter = () => true,
   storage = new AgentTaskStorageProviderDefault(),
   storageKey = 'agent_tasks',
-  defaultNextStepOptions = {}
+  defaultNextStepOptions = {},
+  defaultSummarizeOptions = {}
 }: IUseAgentOptions = {}) => {
   const { openai, environment, currentModel, models } = useEnvironment(
     createEnvironmentRoot,
@@ -90,9 +92,8 @@ const _useAgent = ({
   const summarizeTask = useTask(
     async () => {
       if (!taskContext.value.messages.length) return
-      taskContext.value.title = await environment.summarize(taskContext.value, {
-        model: currentModel.value
-      })
+      const options = defaultSummarizeOptions
+      taskContext.value.title = await environment.summarize(taskContext.value, options)
     },
     { toast: false, onFinished: tasks.refresh }
   )
