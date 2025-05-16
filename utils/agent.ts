@@ -143,6 +143,8 @@ export interface INextStepOptions {
 
 export interface ISummarizeOptions {
   model?: string
+  maxCompletionTokens?: number
+  temperature?: number
 }
 
 export class Environment {
@@ -268,7 +270,7 @@ export class Environment {
           if (delta.content) {
             curMsg.content += delta.content
           }
-          if ('reasoning_content' in delta) {
+          if ('reasoning_content' in delta && delta.reasoning_content) {
             curMsg.thought ??= ''
             curMsg.thought += delta.reasoning_content
           }
@@ -336,9 +338,11 @@ export class Environment {
 
   async summarize(taskContext: ITaskContext, _options?: ISummarizeOptions) {
     const log = logger.extend(`summarize:${Math.random().toString(36).slice(2)}`)
-    const options = defu(_options, this.config.defaultSummarizeOptions)
-    const model = options.model
-    if (!model) throw new Error('No model provided')
+    const options = defu(_options, this.config.defaultSummarizeOptions, {
+      temperature: 0,
+      maxCompletionTokens: 24
+    })
+    if (!options.model) throw new Error('No model provided')
     const messages: OpenAI.ChatCompletionMessageParam[] = [
       {
         role: 'system',
@@ -363,10 +367,10 @@ RULES:
     log('Summarize Info')
     log('messages', messages)
     const completion = await this.llm.chat.completions.create({
-      model,
+      model: options.model,
       messages,
-      max_tokens: 1000,
-      temperature: 0
+      max_completion_tokens: options.maxCompletionTokens,
+      temperature: options.temperature
     })
     const summary = completion.choices[0].message.content ?? ''
     log('Summarize Result')
