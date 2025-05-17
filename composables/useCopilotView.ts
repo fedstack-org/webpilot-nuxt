@@ -1,10 +1,26 @@
 export interface ICopilotViewOptions {
   userName?: string
-  hideInputToolbar?: boolean
-  hideInputToolbarTools?: boolean
-  hideInputToolbarInstructions?: boolean
-  emphasizeFinalMessage?: boolean
-  showSendButton?: boolean
+  input?: {
+    /** @default true */
+    toolbar?:
+      | false
+      | {
+          /** @default true */
+          tools?: boolean
+          /** @default true */
+          instructions?: boolean
+        }
+    /** @default false */
+    sendButton?: boolean
+  }
+  messages?: {
+    /** @default false */
+    emphasizeFinalMessage?: boolean
+    assistant?: {
+      /** @default true */
+      title?: boolean
+    }
+  }
 }
 
 export const copilotViewKey: InjectionKey<ICopilotViewOptions> = Symbol('copilotView')

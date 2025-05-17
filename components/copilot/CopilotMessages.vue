@@ -2,7 +2,7 @@
   <div
     v-if="messages.length"
     class="py-2 space-y-1"
-    :class="{ 'wp--emphasize': options.emphasizeFinalMessage }"
+    :class="{ 'wp--emphasize': options.messages?.emphasizeFinalMessage }"
   >
     <div v-for="(msg, i) of messages" :key="i" class="wp-msg" :class="[`wp-msg-${msg.role}`]">
       <CopilotMessageUser v-if="msg.role === 'user'" :message="msg" />

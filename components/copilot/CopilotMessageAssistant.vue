@@ -8,7 +8,7 @@
               <div class="i-webpilot:icon" />
             </NIcon>
           </NAvatar>
-          <div>
+          <div v-if="options.messages?.assistant?.title !== false">
             {{ $t(message?.partial ? 'webpilot.msg.api_pending' : 'webpilot.msg.api_success') }}
           </div>
         </div>
@@ -48,4 +48,6 @@ import { NAvatar, NCard, NCollapse, NCollapseItem, NIcon, NSpin } from 'naive-ui
 defineProps<{
   message?: ITextMessage
 }>()
+
+const options = useCopilotView()
 </script>

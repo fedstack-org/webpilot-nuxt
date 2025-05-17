@@ -1,7 +1,7 @@
 <template>
   <NCard size="small">
-    <div v-if="!options.hideInputToolbar" class="flex gap-2 items-center mb-2">
-      <NPopover v-if="!options.hideInputToolbarTools" trigger="click">
+    <div v-if="options.input?.toolbar !== false" class="flex gap-2 items-center mb-2">
+      <NPopover v-if="options.input?.toolbar?.tools !== false" trigger="click">
         <template #trigger>
           <NTag type="info" size="small" class="cursor-pointer">
             <template #icon>
@@ -44,7 +44,7 @@
           </div>
         </div>
       </NPopover>
-      <NPopover v-if="!options.hideInputToolbarInstructions" trigger="click">
+      <NPopover v-if="options.input?.toolbar?.instructions !== false" trigger="click">
         <template #trigger>
           <NTag type="info" size="small" class="cursor-pointer">
             <template #icon>
@@ -105,7 +105,7 @@
         @keydown="handleKeydown"
       />
       <NButton
-        v-if="options.showSendButton"
+        v-if="options.input?.sendButton"
         :disabled="!userInput || !!disabled"
         type="primary"
         @click="handleUserInput(userInput)"
