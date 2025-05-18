@@ -9,6 +9,11 @@ export interface IAgentInstructionConfig {
   disabled?: boolean
 }
 
+export interface IAgentConfig {
+  tools: Record<string, IAgentToolConfig>
+  instructions: Record<string, IAgentInstructionConfig>
+}
+
 export interface IAgentTaskContext extends ITaskContext {
   _id: string
   title: string
@@ -61,6 +66,7 @@ export interface IUseAgentOptions {
   storageKey?: MaybeRef<string>
   defaultNextStepOptions?: Partial<INextStepOptions>
   defaultSummarizeOptions?: Partial<ISummarizeOptions>
+  initialConfig?: Partial<IAgentConfig>
 }
 
 const _useAgent = ({
@@ -71,7 +77,8 @@ const _useAgent = ({
   storage = new AgentTaskStorageProviderDefault(),
   storageKey = 'agent_tasks',
   defaultNextStepOptions = {},
-  defaultSummarizeOptions = {}
+  defaultSummarizeOptions = {},
+  initialConfig = {}
 }: IUseAgentOptions = {}) => {
   const { openai, environment, currentModel, models } = useEnvironment(
     createEnvironmentRoot,
@@ -126,9 +133,18 @@ const _useAgent = ({
       }
       const options = defu(
         {
-          toolFilter: (tool) => !config.tools[tool.name]?.disabled && toolFilter(tool),
-          instructionFilter: (instruction) =>
-            !config.instructions[instruction.name]?.disabled && instructionFilter(instruction),
+          toolFilter: (tool) => {
+            const disabled =
+              config.tools[tool.name]?.disabled ??
+              environment.tools.value[tool.name]?.metadata?.disabled
+            return !disabled && toolFilter(tool)
+          },
+          instructionFilter: (instruction) => {
+            const disabled =
+              config.instructions[instruction.name]?.disabled ??
+              environment.instructions.value[instruction.name]?.metadata?.disabled
+            return !disabled && instructionFilter(instruction)
+          },
           model: currentModel.value
         } satisfies INextStepOptions,
         defaultNextStepOptions
@@ -152,9 +168,9 @@ const _useAgent = ({
     },
     { toast: false }
   )
-  const config = reactive({
-    tools: {} as Record<string, IAgentToolConfig>,
-    instructions: {} as Record<string, IAgentInstructionConfig>
+  const config = reactive<IAgentConfig>({
+    tools: initialConfig.tools ?? {},
+    instructions: initialConfig.instructions ?? {}
   })
   return {
     openai,

@@ -1,6 +1,10 @@
 <template>
   <div class="px-2">
-    <NCard size="small">
+    <CopilotMessageToolNext
+      v-if="message.use.name === 'suggest_next_step'"
+      v-model:message="message"
+    />
+    <NCard v-else size="small">
       <template #header>
         <div class="flex items-center gap-2">
           <NAvatar size="small" class="bg-blue-6">
@@ -17,8 +21,14 @@
           <div :class="displayState.class" />
         </NIcon>
       </template>
-      <CopilotToolFollowup v-if="message.use.name === 'ask_followup_question'" :message />
-      <CopilotToolCompletion v-else-if="message.use.name === 'attempt_completion'" :message />
+      <CopilotToolFollowup
+        v-if="message.use.name === 'ask_followup_question'"
+        v-model:message="message"
+      />
+      <CopilotToolCompletion
+        v-else-if="message.use.name === 'attempt_completion'"
+        v-model:message="message"
+      />
       <NAlert
         v-else-if="message.state === 'bad-input'"
         :title="$t('webpilot.msg.tool_use_bad_input')"
@@ -206,8 +216,10 @@ function reject() {
   startStepTask.execute(true)
 }
 
+const specialTools = ['ask_followup_question', 'attempt_completion', 'suggest_next_step']
+
 onMounted(() => {
-  if (['ask_followup_question', 'attempt_completion'].includes(message.value.use.name)) {
+  if (specialTools.includes(message.value.use.name)) {
     return
   }
   if (!tool.value?.needApproval || config.tools[message.value.use.name]?.approved) {

@@ -56,6 +56,7 @@ export interface IAgentTool<Params = any, Result = any> {
     provider?: string
     builtin?: boolean
     uiName?: string
+    disabled?: boolean
     uiParams?: (props: IAgentToolUIParamsProps<Params, Result>) => VNodeChild
     uiApproval?: (props: IAgentToolUIApprovalProps<Params, Result>) => VNodeChild
     uiResult?: (props: IAgentToolUIResultProps<Params, Result>) => VNodeChild
@@ -68,6 +69,7 @@ export interface IAgentInstruction {
   instruction: MaybeRef<string>
   metadata?: {
     provider?: string
+    disabled?: boolean
   }
 }
 
@@ -682,6 +684,32 @@ IMPORTANT NOTE: This tool CANNOT be used until you've confirmed from the user th
       formatter: () => '',
       metadata: {
         builtin: true
+      }
+    })
+    this.registerTool('suggest_next_step', {
+      description: `Suggest the next step for user to take based on the current task context. This tool is useful when the conversation can both be ended or furthered. The options should be short and actionable, helping the user to decide what to do next.`,
+      params: {
+        options: {
+          description: 'An array of suggested next steps for the user to consider',
+          example: '["Get more information", "Go to related page", "Summarize your findings"]'
+        }
+      },
+      validator: (raw) => {
+        const parsed = type({
+          options: type('string.json.parse').to('string[]')
+        })(raw)
+        if (parsed instanceof type.errors) {
+          return parsed.summary
+        }
+        return parsed
+      },
+      handler: () => {
+        throw new Error('Must be called within WebPilot View')
+      },
+      formatter: () => '',
+      metadata: {
+        builtin: true,
+        disabled: true
       }
     })
   }

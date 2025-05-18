@@ -19,14 +19,15 @@
           </div>
           <div v-for="tool in tools" :key="tool.name" class="flex items-center gap-2">
             <NSwitch
-              :value="!config.tools[tool.name]?.disabled"
+              :value="!tool.disabled"
               :round="false"
-              :disabled="environment.tools.value[tool.name]?.metadata?.builtin"
               size="small"
               @update:value="toggleToolDisable(tool.name)"
             />
             <div class="flex-1">
-              <span class="font-bold font-mono">{{ tool.name }}</span>
+              <span class="font-bold font-mono">
+                {{ tool.name }}
+              </span>
               <span v-if="tool.metadata?.provider" class="ml-2 text-xs font-mono">
                 {{ tool.metadata.provider }}
               </span>
@@ -64,10 +65,12 @@
             <NCheckbox
               v-for="instruction in instructions"
               :key="instruction.name"
-              :checked="!config.instructions[instruction.name]?.disabled"
+              :checked="!instruction.disabled"
               @update:checked="toggleInstructionDisable(instruction.name)"
             >
-              <span class="font-bold font-mono">{{ instruction.name }}</span>
+              <span class="font-bold font-mono">
+                {{ instruction.name }}
+              </span>
               <span v-if="instruction.metadata?.provider" class="ml-2 text-xs font-mono">
                 {{ instruction.metadata.provider }}
               </span>
@@ -201,9 +204,21 @@ const disabled = computed(() => {
   return ''
 })
 
-const tools = computed(() => Object.values(environment.tools.value).filter(toolFilter))
+const tools = computed(() =>
+  Object.values(environment.tools.value)
+    .filter(toolFilter)
+    .map((tool) => ({
+      ...tool,
+      disabled: config.tools[tool.name]?.disabled ?? tool.metadata?.disabled
+    }))
+)
 const instructions = computed(() =>
-  Object.values(environment.instructions.value).filter(instructionFilter)
+  Object.values(environment.instructions.value)
+    .filter(instructionFilter)
+    .map((instruction) => ({
+      ...instruction,
+      disabled: config.instructions[instruction.name]?.disabled ?? instruction.metadata?.disabled
+    }))
 )
 
 const handleKeydown = (e: KeyboardEvent) => {
@@ -216,7 +231,9 @@ const handleKeydown = (e: KeyboardEvent) => {
 
 const toggleToolDisable = (name: string) => {
   config.tools[name] ??= {}
-  config.tools[name].disabled = !config.tools[name].disabled
+  config.tools[name].disabled = !(
+    config.tools[name].disabled ?? environment.tools.value[name]?.metadata?.disabled
+  )
 }
 
 const toggleToolApprove = (name: string) => {
@@ -226,6 +243,8 @@ const toggleToolApprove = (name: string) => {
 
 const toggleInstructionDisable = (name: string) => {
   config.instructions[name] ??= {}
-  config.instructions[name].disabled = !config.instructions[name].disabled
+  config.instructions[name].disabled = !(
+    config.instructions[name].disabled ?? environment.instructions.value[name]?.metadata?.disabled
+  )
 }
 </script>
