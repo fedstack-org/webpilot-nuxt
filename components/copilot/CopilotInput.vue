@@ -111,7 +111,7 @@
         v-if="options.input?.sendButton"
         :disabled="!userInput || !!disabled"
         type="primary"
-        @click="handleUserInput(userInput)"
+        @click="handleInput(userInput)"
       >
         <template #icon>
           <NIcon>
@@ -128,7 +128,7 @@
         v-for="action of quickActions"
         :key="action.name"
         size="small"
-        @click="handleUserInput(action.instruction)"
+        @click="handleInput(action.instruction)"
       >
         {{ action.name }}
       </NButton>
@@ -194,6 +194,9 @@ const disabled = computed(() => {
   const lastMsg = taskContext.value.messages.findLast((msg) => msg.role !== 'event')
   if (lastMsg?.role === 'tool') {
     if (['pending-approval', 'pending-response'].includes(lastMsg.state)) {
+      if (lastMsg.use.name === 'suggest_next_step') {
+        return ''
+      }
       return 'pending-tool'
     }
     return 'paused'
@@ -221,10 +224,26 @@ const instructions = computed(() =>
     }))
 )
 
+const handleInput = (msg: string) => {
+  const lastMsg = taskContext.value.messages.findLast((msg) => msg.role !== 'event')
+  if (lastMsg?.role === 'tool') {
+    if (['pending-approval', 'pending-response'].includes(lastMsg.state)) {
+      if (lastMsg.use.name === 'suggest_next_step') {
+        lastMsg.result = msg
+        lastMsg.formattedResult = msg
+        lastMsg.state = 'completed'
+        startStepTask.execute(true)
+        return
+      }
+    }
+  }
+  handleUserInput(msg)
+}
+
 const handleKeydown = (e: KeyboardEvent) => {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault()
-    handleUserInput(userInput.value)
+    handleInput(userInput.value)
     userInput.value = ''
   }
 }

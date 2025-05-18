@@ -21,8 +21,6 @@ import { NButton, NSpace } from 'naive-ui'
 const message = defineModel<IToolMessage>('message', { required: true })
 const { startStepTask } = useCopilot()
 
-message.value.uiState ??= {}
-
 const options = computed<string[]>(() => message.value.params.options ?? [])
 const disabled = computed(() => message.value.state !== 'pending-response')
 
