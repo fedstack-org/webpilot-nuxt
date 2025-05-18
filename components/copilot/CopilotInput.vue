@@ -79,7 +79,7 @@
         </div>
       </NPopover>
       <div class="flex-1" />
-      <NPopselect v-model:value="currentModel" :options="modelOptions" trigger="click">
+      <NPopselect v-model:value="currentModel" :options="modelOptions" trigger="click" scrollable>
         <NTag type="primary" size="small" class="cursor-pointer">
           <template #icon>
             <NIcon>
