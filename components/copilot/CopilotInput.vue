@@ -229,11 +229,7 @@ const handleInput = (msg: string) => {
   if (lastMsg?.role === 'tool') {
     if (['pending-approval', 'pending-response'].includes(lastMsg.state)) {
       if (lastMsg.use.name === 'suggest_next_step') {
-        lastMsg.result = msg
-        lastMsg.formattedResult = msg
-        lastMsg.state = 'completed'
-        startStepTask.execute(true)
-        return
+        lastMsg.state = 'rejected'
       }
     }
   }
