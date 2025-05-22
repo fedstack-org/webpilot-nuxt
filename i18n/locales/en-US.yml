@@ -42,6 +42,7 @@ webpilot:
     event_title__max_steps_reached: Consecutive step limit reached
     event_title__max_retries_reached: '@:webpilot.name encountered a problem'
     event_title__api_error: Network error
+    event_title__abort: Task aborted
   action:
     approve: Approve
     reject: Reject

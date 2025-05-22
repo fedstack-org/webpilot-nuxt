@@ -126,11 +126,13 @@ const _useAgent = ({
     updatedAt: Date.now()
   })
   const taskContext = ref<IAgentTaskContext>(createEmptyTask())
+  let stepController: AbortController | null = null
   const startStepTask = useTask(
     async (resetConsecutiveSteps?: boolean) => {
       if (resetConsecutiveSteps) {
         taskContext.value.consecutiveSteps = 0
       }
+      stepController = new AbortController()
       const options = defu(
         {
           toolFilter: (tool) => {
@@ -145,7 +147,8 @@ const _useAgent = ({
               environment.instructions.value[instruction.name]?.metadata?.disabled
             return !disabled && instructionFilter(instruction)
           },
-          model: currentModel.value
+          model: currentModel.value,
+          signal: stepController.signal
         } satisfies INextStepOptions,
         defaultNextStepOptions
       )
@@ -154,6 +157,9 @@ const _useAgent = ({
     },
     { toast: false }
   )
+  const abortStepTask = () => {
+    stepController?.abort()
+  }
   const handleUserInput = (content: string) => {
     taskContext.value.messages.push({
       role: 'user',
@@ -179,6 +185,7 @@ const _useAgent = ({
     models,
     taskContext,
     startStepTask,
+    abortStepTask,
     config,
     tasks,
     recentTasks,

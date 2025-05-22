@@ -2,7 +2,7 @@
 import { type } from 'arktype'
 import debug from 'debug'
 import { defu } from 'defu'
-import type { OpenAI } from 'openai'
+import { APIUserAbortError, type OpenAI } from 'openai'
 import type { VNodeChild } from 'vue'
 import { noToolUsedResponse } from './responses'
 
@@ -78,6 +78,7 @@ export interface ITextMessage {
   content: string
   thought?: string
   partial?: boolean
+  aborted?: boolean
 }
 
 export interface IToolMessage {
@@ -94,7 +95,7 @@ export interface IToolMessage {
 
 export interface IEventMessage {
   role: 'event'
-  type: 'max_steps_reached' | 'max_retries_reached' | 'api_error'
+  type: 'max_steps_reached' | 'max_retries_reached' | 'api_error' | 'abort'
 }
 
 export type IAgentMessage = ITextMessage | IToolMessage | IEventMessage
@@ -141,6 +142,7 @@ export interface INextStepOptions {
   systemPromptTemplate?: string | (() => string) | (() => Promise<string>)
   toolFilter?: (tool: IAgentTool) => boolean
   instructionFilter?: (instruction: IAgentInstruction) => boolean
+  signal?: AbortSignal
 }
 
 export interface ISummarizeOptions {
@@ -260,12 +262,15 @@ export class Environment {
       const curMsg = taskContext.messages[taskContext.messages.length - 1] as ITextMessage
       let finalContent: string
       try {
-        const stream = this.llm.beta.chat.completions.stream({
-          messages,
-          model: options.model,
-          temperature: options.temperature,
-          stream: true
-        })
+        const stream = this.llm.beta.chat.completions.stream(
+          {
+            messages,
+            model: options.model,
+            temperature: options.temperature,
+            stream: true
+          },
+          { signal: options.signal }
+        )
         for await (const chunk of stream) {
           const delta = chunk.choices[0]?.delta
           if (!delta) continue
@@ -279,12 +284,21 @@ export class Environment {
         }
         const chatCompletion = await stream.finalChatCompletion()
         finalContent = chatCompletion.choices[0].message.content ?? ''
-      } catch {
-        taskContext.messages.pop()
-        taskContext.messages.push({
-          role: 'event',
-          type: 'api_error'
-        })
+      } catch (err) {
+        if (err instanceof APIUserAbortError) {
+          curMsg.partial = false
+          curMsg.aborted = true
+          taskContext.messages.push({
+            role: 'event',
+            type: 'abort'
+          })
+        } else {
+          taskContext.messages.pop()
+          taskContext.messages.push({
+            role: 'event',
+            type: 'api_error'
+          })
+        }
         return
       }
       const contentBlocks = await this._parseAssistantMessage(finalContent)

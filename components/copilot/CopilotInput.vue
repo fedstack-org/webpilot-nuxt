@@ -119,6 +119,13 @@
           </NIcon>
         </template>
       </NButton>
+      <NButton v-if="disabled === 'loading'" type="error" secondary @click="abortStepTask">
+        <template #icon>
+          <NIcon>
+            <div class="i-carbon:stop-filled" />
+          </NIcon>
+        </template>
+      </NButton>
     </div>
     <div
       v-if="!taskContext.messages.length && quickActions.length"
@@ -161,6 +168,7 @@ const options = useCopilotView()
 const {
   handleUserInput,
   startStepTask,
+  abortStepTask,
   environment,
   config,
   taskContext,

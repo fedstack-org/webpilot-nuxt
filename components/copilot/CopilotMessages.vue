@@ -31,6 +31,7 @@ const messages = computed(() => taskContext.value.messages)
 
 .wp--emphasize .wp-msg-user,
 .wp--emphasize .wp-msg:hover,
+.wp--emphasize .wp-msg:last-child,
 .wp--emphasize .wp-msg-tool:nth-last-child(1 of .wp-msg-tool),
 .wp--emphasize .wp-msg-assistant:nth-last-child(1 of .wp-msg-assistant) {
   opacity: 1;

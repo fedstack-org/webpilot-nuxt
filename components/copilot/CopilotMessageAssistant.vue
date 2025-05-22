@@ -15,6 +15,9 @@
       </template>
       <template #header-extra>
         <NSpin v-if="message?.partial" :size="24" />
+        <NIcon v-else-if="message?.aborted" :size="24" color="red">
+          <div class="i-carbon:stop" />
+        </NIcon>
         <NIcon v-else :size="24" color="green">
           <div class="i-carbon:checkmark" />
         </NIcon>
@@ -34,10 +37,7 @@
           </NCard>
         </NCollapseItem>
       </NCollapse>
-      <MarkdownContent
-        class="w-0 min-w-full bg-transparent!"
-        :content="message?.content || (message?.partial ? '' : $t('webpilot.msg.direct_tool_use'))"
-      />
+      <MarkdownContent class="w-0 min-w-full bg-transparent!" :content />
     </NCard>
   </div>
 </template>
@@ -45,9 +45,16 @@
 <script setup lang="ts">
 import { NAvatar, NCard, NCollapse, NCollapseItem, NIcon, NSpin } from 'naive-ui'
 
-defineProps<{
+const props = defineProps<{
   message?: ITextMessage
 }>()
 
 const options = useCopilotView()
+const { t } = useI18n()
+const content = computed(() => {
+  if (!props.message) return ''
+  if (props.message.content) return props.message.content
+  if (props.message.partial || props.message.aborted) return ''
+  return t('webpilot.msg.direct_tool_use')
+})
 </script>
