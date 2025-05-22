@@ -23,17 +23,9 @@
         </NIcon>
       </template>
       <NCollapse v-if="message?.thought" class="mb-2">
-        <NCollapseItem
-          :title="
-            $t(
-              message?.partial && !message?.content
-                ? 'webpilot.msg.thinking'
-                : 'webpilot.msg.thought'
-            )
-          "
-        >
+        <NCollapseItem :title="thinkingTitle">
           <NCard embedded>
-            <MarkdownContent class="w-0 min-w-full bg-transparent!" :content="message?.thought" />
+            <MarkdownContent class="w-0 min-w-full bg-transparent!" :content="message.thought" />
           </NCard>
         </NCollapseItem>
       </NCollapse>
@@ -56,5 +48,10 @@ const content = computed(() => {
   if (props.message.content) return props.message.content
   if (props.message.partial || props.message.aborted) return ''
   return t('webpilot.msg.direct_tool_use')
+})
+const thinkingTitle = computed(() => {
+  if (!props.message) return ''
+  if (props.message.partial && !props.message.content) return t('webpilot.msg.thinking')
+  return t('webpilot.msg.thought')
 })
 </script>
