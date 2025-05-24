@@ -417,6 +417,16 @@ ${conversation.map((item) => JSON.stringify(item)).join('\n')}
           result.push({ role: 'user', content })
           continue
         }
+        const lastMsg = result.at(-1)
+        if (lastMsg?.role === 'assistant') {
+          // Reconstruct the tool use
+          let use = `\n<${message.use.name}>\n`
+          for (const [name, param] of Object.entries(message.params)) {
+            use += `<${name}>${param}</${name}>\n`
+          }
+          use += `</${message.use.name}>`
+          lastMsg.content += use
+        }
         let content = `[Result for tool ${message.use.name}]\n`
         switch (message.state) {
           case 'completed':
