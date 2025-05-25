@@ -76,7 +76,7 @@ const { options = {} } = defineProps<{
 provideCopilotView(options)
 const scrollbar = useTemplateRef('scrollbar')
 const { taskContext, clearTasks, tasks, userInput, handleUserInput } = useCopilot()
-const showTasks = ref(false)
+const showTasks = defineModel<boolean>('showTasks', { default: false })
 const stickyToBottom = ref(true)
 const scrollToBottom = useDebounceFn(
   () => {
