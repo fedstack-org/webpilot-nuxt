@@ -421,7 +421,7 @@ ${conversation.map((item) => JSON.stringify(item)).join('\n')}
         if (lastMsg?.role === 'assistant') {
           // Reconstruct the tool use
           let use = `\n<${message.use.name}>\n`
-          for (const [name, param] of Object.entries(message.params)) {
+          for (const [name, param] of Object.entries(message.use.params)) {
             use += `<${name}>${param}</${name}>\n`
           }
           use += `</${message.use.name}>`

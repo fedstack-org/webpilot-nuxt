@@ -14,34 +14,31 @@
     v-else-if="tasks.data.value.length && showTasks"
     class="w-0 min-w-full h-full flex flex-col items-stretch"
   >
-    <NScrollbar
-      class="w-0 min-w-full flex-1"
-      content-class="overflow-hidden flex flex-col gap-2 p-4 items-center"
-    >
-      <div class="self-stretch flex items-center">
-        <div class="flex-1 flex justify-start">
-          <NButton size="small" @click="showTasks = false">
-            <template #icon>
-              <NIcon>
-                <div class="i-carbon:chevron-left" />
-              </NIcon>
-            </template>
-          </NButton>
-        </div>
-        {{ $t('webpilot.msg.all_tasks') }}
-        <div class="flex-1 flex justify-end">
-          <NPopconfirm @positive-click="clearTasks.execute()">
-            <template #trigger>
-              <NButton size="small" type="error" :loading="clearTasks.loading.value">
-                <NIcon>
-                  <div class="i-carbon:trash-can" />
-                </NIcon>
-              </NButton>
-            </template>
-            {{ $t('webpilot.msg.clear_tasks_confirm') }}
-          </NPopconfirm>
-        </div>
+    <div class="self-stretch flex items-center mb-2">
+      <div class="flex-1 flex justify-start">
+        <NButton size="small" @click="showTasks = false">
+          <template #icon>
+            <NIcon>
+              <div class="i-carbon:chevron-left" />
+            </NIcon>
+          </template>
+        </NButton>
       </div>
+      {{ $t('webpilot.msg.all_tasks') }}
+      <div class="flex-1 flex justify-end">
+        <NPopconfirm @positive-click="clearTasks.execute()">
+          <template #trigger>
+            <NButton size="small" type="error" :loading="clearTasks.loading.value">
+              <NIcon>
+                <div class="i-carbon:trash-can" />
+              </NIcon>
+            </NButton>
+          </template>
+          {{ $t('webpilot.msg.clear_tasks_confirm') }}
+        </NPopconfirm>
+      </div>
+    </div>
+    <NScrollbar class="w-0 min-w-full flex-1" content-class="overflow-hidden space-y-2 px-4 py-2">
       <CopilotTask v-for="task in tasks.data.value" :key="task._id" :task />
     </NScrollbar>
   </div>
