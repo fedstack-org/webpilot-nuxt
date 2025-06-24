@@ -18,21 +18,17 @@ export const useTask = <T extends (...args: any) => any>(
   const loading = ref(false)
   const error = ref<Error | null>(null)
   const result = ref<ReturnType<T> | null>(null)
-  const message = options.toast ? useMessage() : (null as never)
+  const message = options.toast ? useMessage() : null
   const execute = async (...args: Parameters<T>) => {
     loading.value = true
     error.value = null
     try {
       result.value = await task(...args)
-      if (options.toast) {
-        message.success('操作成功')
-      }
+      message?.success('操作成功')
       options.onSuccess?.(result.value)
     } catch (e) {
       error.value = e instanceof Error ? e : new Error(`${e}`)
-      if (options.toast) {
-        message.error('操作失败')
-      }
+      message?.error('操作失败')
       options.onError?.(error.value)
     } finally {
       loading.value = false
