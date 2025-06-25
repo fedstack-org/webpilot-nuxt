@@ -1,4 +1,4 @@
-import OpenAI from 'openai'
+import type OpenAI from 'openai'
 import type { InjectionKey } from 'vue'
 
 export interface IUseEnvironmentOptions {
@@ -16,19 +16,7 @@ const _useEnvironment = ({
   modelFilter = () => true,
   additionalModels = []
 }: IUseEnvironmentOptions = {}) => {
-  const { $auth } = useNuxtApp()
-  const openai = new OpenAI({
-    apiKey: 'sk-fake',
-    baseURL: new URL('/api/ai', location.origin).toString(),
-    dangerouslyAllowBrowser: true,
-    fetch: async (...args) => {
-      const request = new Request(...args)
-      const headers = new Headers(request.headers)
-      const token = await $auth.getAuthToken()
-      headers.set('Authorization', `Bearer ${token?.token}`)
-      return fetch(new Request(request, { headers }))
-    }
-  })
+  const { openai } = useOpenAI()
   const environment = new Environment(openai, config)
   const environmentId = useId() || 'environment'
   const currentModel = storageKey
