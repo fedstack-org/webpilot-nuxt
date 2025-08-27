@@ -14,6 +14,14 @@ md.use(
   })
 )
 md.use(mk)
+md.renderer.rules.paragraph_open = //
+  md.renderer.rules.heading_open = (tokens, idx, options, env, slf) => {
+    if (tokens[idx].map && tokens[idx].level === 0) {
+      const line = tokens[idx].map[0]
+      tokens[idx].attrSet('data-source-line', String(line))
+    }
+    return slf.renderToken(tokens, idx, options)
+  }
 
 export async function renderMarkdown(source: string) {
   const html = await md.renderAsync(source)
