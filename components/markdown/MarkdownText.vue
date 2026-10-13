@@ -1,6 +1,5 @@
-<!-- eslint-disable vue/no-v-html -->
 <template>
-  <span v-html="data" />
+  <span>{{ data }}</span>
 </template>
 
 <script setup lang="ts">
